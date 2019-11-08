@@ -13,7 +13,7 @@ LazyData: true
 Biarch: true
 Depends: 
     R (>= 3.4.0)
-    R2WinBUGS (>= 2.1.0)
 Imports: 
+    R2WinBUGS (>= 2.1.0)
 SystemRequirements: GNU make
 RoxygenNote: 6.1.99.9001
