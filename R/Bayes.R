@@ -45,13 +45,36 @@ bayes_lca = function(formula, data, init, ...) {
   
   # construct R2WinBUGS input
   
+  # call R bugs model constructor
+  
   # Fit Bayesian latent class model
   
   # Results
-  
+  # return bugs fit
   return(
     list(model.frame = mf,
          model.matrix = x)
   )
   
 }
+
+
+
+#' Contruct Bugs Model
+#'
+#' Construct bugs latent class model and return the result for use in the code
+#' function bayes_lca
+#'
+#' @param x model matrix
+#'
+#' @return R function which contains Bugs model
+
+bugs_model = function(x) {
+  # return the exact form we want to fit,
+  # do all centering and other mods?
+  return(model_func)
+}
+
+
+
+
