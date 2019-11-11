@@ -1,0 +1,122 @@
+#############Linear Version################
+###############initials#####################
+list( theta=c(0.33,0.33,0.34),
+beta=c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+alpha=c(0,0,0))	
+
+############model part########	
+
+model{
+	for (i in 1:N){
+		true[i]~dcat(theta[])
+		
+                Z1[i]~dcat(Z1prior[true[i],])
+		Z2[i]~dcat(Z2prior[true[i],])
+		Z3[i]~dcat(Z3prior[true[i],])
+		Z4[i]~dcat(Z4prior[true[i],])
+		Z5[i]~dcat(Z5prior[true[i],])
+		Z6[i]~dcat(Z6prior[true[i],])
+		Z7[i]~dcat(Z7prior[true[i],])
+		Z8[i]~dcat(Z8prior[true[i],])
+		Z9[i]~dcat(Z9prior[true[i],])
+		Z10[i]~dcat(Z10prior[true[i],])
+		Z11[i]~dcat(Z11prior[true[i],])
+		Z12[i]~dcat(Z12prior[true[i],])
+
+		C1[i]<-step(-true[i]+1)
+		C3[i]<-step(true[i]-3)
+		C2[i]<-step(true[i]-2)-C3[i]
+		
+                X1_cut[i]<-step(X1[1]-60)*(X1[1]-60)
+		
+                age2[i]<-(X1[i]-55.4)*(X1[i]-55.4)/100
+		
+                age3[i]<-age2[i]*(X1[i]-55.4)/10
+		
+                age3_cut[i]<-X1_cut[i]*X1_cut[i]*X1_cut[i]/1000
+		
+                yhat[i] <- (X1[i]-55.4)/10*beta[1]+
+                            X2[i]*beta[2]+
+                           (X3[i]-5.37)/10*beta[3]+
+                            X4[i]*beta[4]+
+                            X5[i]/10*beta[5]+
+                            X6[i]*beta[6]+
+                            X13[i]*beta[7]+
+                            X8[i]*beta[8]+
+                            X9[i]*beta[9]+
+                            X10[i]*beta[10]+
+                            X11[i]*beta[11]+
+                            X12[i]*beta[12]+
+                            age2[i]*beta[13]+
+                            age3[i]*beta[14]+
+                            age3_cut[i]*beta[15]+
+                            alpha[1]+
+                            alpha[2]*C2[i]+
+                            alpha[3]*C3[i]
+
+		y[i]~dnorm(yhat[i],tau)
+		
+	}
+        
+	theta[1:3]~ddirch(prior[])
+        
+	beta[1]~dnorm(0,0.1)
+	beta[2]~dnorm(0,0.1)
+	beta[3]~dnorm(0,0.1)
+	beta[4]~dnorm(0,0.1)
+	beta[5]~dnorm(0,0.1)
+	beta[6]~dnorm(0,0.1)
+	beta[7]~dnorm(0,0.1)
+	beta[8]~dnorm(0,0.1)
+	beta[9]~dnorm(0,0.1)
+	beta[10]~dnorm(0,0.1)
+	beta[11]~dnorm(0,0.1)
+	beta[12]~dnorm(0,0.1)
+	beta[13]~dnorm(0,0.1)
+	beta[14]~dnorm(0,0.1)
+	beta[15]~dnorm(0,0.1)
+        
+	alpha[1]~dnorm(0,0.1)
+	alpha[2]~dnorm(0,0.1)
+	alpha[3]~dnorm(0,0.1)
+        
+	tau~dgamma(0.1,0.1)
+        
+	Z1prior[1,1:5]~ddirch(prior5[])
+	Z1prior[2,1:5]~ddirch(prior5[])
+	Z1prior[3,1:5]~ddirch(prior5[])
+	Z2prior[1,1:5]~ddirch(prior5[])
+	Z2prior[2,1:5]~ddirch(prior5[])
+	Z2prior[3,1:5]~ddirch(prior5[])
+	Z3prior[1,1:5]~ddirch(prior5[])
+	Z3prior[2,1:5]~ddirch(prior5[])
+	Z3prior[3,1:5]~ddirch(prior5[])
+	Z4prior[1,1:5]~ddirch(prior5[])
+	Z4prior[2,1:5]~ddirch(prior5[])
+	Z4prior[3,1:5]~ddirch(prior5[])
+	Z5prior[1,1:5]~ddirch(prior5[])
+	Z5prior[2,1:5]~ddirch(prior5[])
+	Z5prior[3,1:5]~ddirch(prior5[])
+	Z6prior[1,1:5]~ddirch(prior5[])
+	Z6prior[2,1:5]~ddirch(prior5[])
+	Z6prior[3,1:5]~ddirch(prior5[])
+	Z7prior[1,1:5]~ddirch(prior5[])
+	Z7prior[2,1:5]~ddirch(prior5[])
+	Z7prior[3,1:5]~ddirch(prior5[])
+	Z8prior[1,1:6]~ddirch(prior6[])
+	Z8prior[2,1:6]~ddirch(prior6[])
+	Z8prior[3,1:6]~ddirch(prior6[])
+	Z9prior[1,1:6]~ddirch(prior6[])
+	Z9prior[2,1:6]~ddirch(prior6[])
+	Z9prior[3,1:6]~ddirch(prior6[])
+	Z10prior[1,1:6]~ddirch(prior6[])
+	Z10prior[2,1:6]~ddirch(prior6[])
+	Z10prior[3,1:6]~ddirch(prior6[])
+	Z11prior[1,1:6]~ddirch(prior6[])
+	Z11prior[2,1:6]~ddirch(prior6[])
+	Z11prior[3,1:6]~ddirch(prior6[])
+	Z12prior[1,1:5]~ddirch(prior5[])
+	Z12prior[2,1:5]~ddirch(prior5[])
+	Z12prior[3,1:5]~ddirch(prior5[])
+
+}
