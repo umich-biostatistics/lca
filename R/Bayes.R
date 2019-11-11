@@ -76,10 +76,7 @@ constr_bugs_model = function() {
   # return the exact form we want to fit,
   
   bugs_model_func = function() {
-   
-    list( theta=c(0.33,0.33,0.34) )	
     
-    model{
       for (i in 1:N){
         true[i]~dcat(theta[])
         
@@ -114,8 +111,6 @@ constr_bugs_model = function() {
         Z11prior[j,1:4]~ddirch(prior4[])
         Z12prior[j,1:4]~ddirch(prior4[])
       }
-      
-    }
     
     
   }
