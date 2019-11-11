@@ -71,7 +71,7 @@ bayes_lca = function(formula, data, nclasses, init, manifest, ...) {
 #'
 #' @return R function which contains Bugs model
 
-constr_bugs_model = function(x) {
+constr_bugs_model = function() {
   
   # return the exact form we want to fit,
   
@@ -96,63 +96,24 @@ constr_bugs_model = function(x) {
         Z11[i]~dcat(Z11prior[true[i],])
         Z12[i]~dcat(Z12prior[true[i],])
         
-        #C1[i]<-step(-true[i]+1)
-        #C3[i]<-step(true[i]-3)
-        #C2[i]<-step(true[i]-2)-C3[i] # need to re-write
-        
-        #yhat[i] <- 
-        #  alpha[1]+
-        #  alpha[2]*C2[i]+
-        #  alpha[3]*C3[i]
-        
-        #y[i]~dnorm(yhat[i],tau)
-        
       }
       
       theta[1:3]~ddirch(prior[])
       
-      #alpha[1]~dnorm(0,0.1)
-      #alpha[2]~dnorm(0,0.1)
-      #alpha[3]~dnorm(0,0.1)
-      
-      #tau~dgamma(0.1,0.1)
-      
-      Z1prior[1,1:5]~ddirch(prior5[])
-      Z1prior[2,1:5]~ddirch(prior5[])
-      Z1prior[3,1:5]~ddirch(prior5[])
-      Z2prior[1,1:5]~ddirch(prior5[])
-      Z2prior[2,1:5]~ddirch(prior5[])
-      Z2prior[3,1:5]~ddirch(prior5[])
-      Z3prior[1,1:5]~ddirch(prior5[])
-      Z3prior[2,1:5]~ddirch(prior5[])
-      Z3prior[3,1:5]~ddirch(prior5[])
-      Z4prior[1,1:5]~ddirch(prior5[])
-      Z4prior[2,1:5]~ddirch(prior5[])
-      Z4prior[3,1:5]~ddirch(prior5[])
-      Z5prior[1,1:5]~ddirch(prior5[])
-      Z5prior[2,1:5]~ddirch(prior5[])
-      Z5prior[3,1:5]~ddirch(prior5[])
-      Z6prior[1,1:5]~ddirch(prior5[])
-      Z6prior[2,1:5]~ddirch(prior5[])
-      Z6prior[3,1:5]~ddirch(prior5[])
-      Z7prior[1,1:5]~ddirch(prior5[])
-      Z7prior[2,1:5]~ddirch(prior5[])
-      Z7prior[3,1:5]~ddirch(prior5[])
-      Z8prior[1,1:6]~ddirch(prior6[])
-      Z8prior[2,1:6]~ddirch(prior6[])
-      Z8prior[3,1:6]~ddirch(prior6[])
-      Z9prior[1,1:6]~ddirch(prior6[])
-      Z9prior[2,1:6]~ddirch(prior6[])
-      Z9prior[3,1:6]~ddirch(prior6[])
-      Z10prior[1,1:6]~ddirch(prior6[])
-      Z10prior[2,1:6]~ddirch(prior6[])
-      Z10prior[3,1:6]~ddirch(prior6[])
-      Z11prior[1,1:6]~ddirch(prior6[])
-      Z11prior[2,1:6]~ddirch(prior6[])
-      Z11prior[3,1:6]~ddirch(prior6[])
-      Z12prior[1,1:5]~ddirch(prior5[])
-      Z12prior[2,1:5]~ddirch(prior5[])
-      Z12prior[3,1:5]~ddirch(prior5[])
+      for(j in 1:3) {
+        Z1prior[j,1:4]~ddirch(prior4[])
+        Z2prior[j,1:4]~ddirch(prior4[])
+        Z3prior[j,1:4]~ddirch(prior4[])
+        Z4prior[j,1:4]~ddirch(prior4[])
+        Z5prior[j,1:4]~ddirch(prior4[])
+        Z6prior[j,1:4]~ddirch(prior4[])
+        Z7prior[j,1:4]~ddirch(prior4[])
+        Z8prior[j,1:4]~ddirch(prior4[])
+        Z9prior[j,1:4]~ddirch(prior4[])
+        Z10prior[j,1:4]~ddirch(prior4[])
+        Z11prior[j,1:4]~ddirch(prior4[])
+        Z12prior[j,1:4]~ddirch(prior4[])
+      }
       
     }
     
