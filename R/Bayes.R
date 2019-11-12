@@ -31,9 +31,7 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
   
   # checks on input
   
-  if(is.null(formula)) {
-    stop("A model formula is required.")
-  }
+  # check for valid formula?
   
   if(is.null(data)) {
     stop("A data set is required to fit the model.")
@@ -45,6 +43,9 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
   
   N = nrow(data)
   n_manifest = length(manifest)
+  
+  if(is.null(formula)) {regression = FALSE}
+  else {regression = TRUE}
   
   # construct a model frame (mf)
   
@@ -100,7 +101,7 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
   
   # call R bugs model constructor
   model = constr_bugs_model(N = N, n_manifest = n_manifest,
-                            nclasses = nclasses)
+                            nclasses = nclasses, regression = regression)
   # write model
   filename <- file.path(dir, "model.bug")
   write.model(constr_bugs_model(N = N, n_manifest = n_manifest, nclasses = nclasses), filename)
@@ -131,7 +132,7 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
 #'
 #' @return R function which contains Bugs model
 
-constr_bugs_model = function(N, n_manifest, nclasses) {
+constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression) {
   
   constructor = function() {
     
@@ -146,6 +147,11 @@ constr_bugs_model = function(N, n_manifest, nclasses) {
             for(j in 1:!!n_manifest){
               Z[i,j]~dcat(Zprior[true[i],j,])
             }
+            
+            # vectorize regression expression
+            # vectorized multiplication?
+            yhat[i] <- x[i]*beta + C[i]*alpha
+            y[i]~dnorm(yhat[i],tau)
           }
           
           theta[1:!!nclasses]~ddirch(prior[])
@@ -155,6 +161,16 @@ constr_bugs_model = function(N, n_manifest, nclasses) {
               Zprior[c,j,1:4]~ddirch(prior4[])
             }
           }
+          
+          for(k in 1:!!n_beta) {
+            beta[k]~dnorm(0,0.1)
+          }
+          
+          for(k in 1:!!nclasses) {
+            alpha[k]~dnorm(0,0.1)
+          }
+          
+          tau~dgamma(0.1,0.1)
           
         }
         
