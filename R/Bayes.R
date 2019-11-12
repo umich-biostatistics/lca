@@ -6,7 +6,10 @@
 #' Given a set of categorical predictors, draw posterior distribution of 
 #' probability of class membership for each observation.
 #' 
-#' @param formula
+#' @param formula If formula = NULL, LCA without regression model is fitted. If
+#' a regression model is to be fitted, specify a formula using R standard syntax,
+#' e.g., Y ~ age + sex + trt. Do not include manifest variables in the regression
+#' model specification. These will be appended internally.
 #' @param data
 #' @param nclasses
 #' @param manifest character vector containing the names of each manifest variable,
@@ -64,19 +67,33 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
   
   Z = mf[,manifest]
   
+  unique.manifest.levels = unique(apply(Z, 2, function(x) {length(unique(x))}))
+  
   pclass_prior = round(rep(1/nclasses, nclasses), digits = 3)
   if(sum(pclass_prior) != 1){
     pclass_prior[length(pclass_prior)] = pclass_prior[length(pclass_prior)] + 
       (1 - sum(pclass_prior))
   }
   
-  dat_list = list(
-    Z = structure(
-      .Data=as.vector(Z),
-      .Dim=c(N,n_manifest)
-    ),
-    prior = pclass_prior,
-    prior4 = c(0.25, 0.25, 0.25, 0.25)
+  dat_list = vector(mode = "list", length = length(unique.manifest.levels) + 2)
+  name = vector(mode = "numeric", length = length(unique.manifest.levels))
+  for(j in 1:length(unique.manifest.levels)) {
+    name[j] = paste("prior", unique.manifest.levels[j], sep = "")
+    prior = round(rep(1/unique.manifest.levels[j], unique.manifest.levels[j]), digits = 3)
+    if(sum(prior) != 1){
+      prior[length(prior)] = prior[length(prior)] + 
+        (1 - sum(prior))
+    }
+    dat_list[[j]] = prior
+  }
+  names(dat_list)
+  
+  names(dat_list) = c(name, "prior", "Z")
+  
+  dat_list["prior"] =  pclass_prior
+  dat_list["Z"] = structure(
+    .Data=as.vector(Z),
+    .Dim=c(N,n_manifest)
   )
   
   # construct R2WinBUGS input
