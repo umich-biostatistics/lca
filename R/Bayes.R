@@ -71,7 +71,7 @@ bayes_lca = function(formula, data, nclasses, init, manifest, ...) {
 #'
 #' @return R function which contains Bugs model
 
-constr_bugs_model = function(N, n_manifest) {
+constr_bugs_model = function(N, n_manifest, nclasses) {
   
   constructor = function() {
     
@@ -81,41 +81,21 @@ constr_bugs_model = function(N, n_manifest) {
         bugs_model_func = function() {
           
           for (i in 1:!!N){
+            
             true[i]~dcat(theta[])
             
-            for(j in 1:!!n_manifest){}
-            Z1[i]~dcat(Z1prior[true[i],])
-            Z2[i]~dcat(Z2prior[true[i],])
-            Z3[i]~dcat(Z3prior[true[i],])
-            Z4[i]~dcat(Z4prior[true[i],])
-            Z5[i]~dcat(Z5prior[true[i],])
-            Z6[i]~dcat(Z6prior[true[i],])
-            Z7[i]~dcat(Z7prior[true[i],])
-            Z8[i]~dcat(Z8prior[true[i],])
-            Z9[i]~dcat(Z9prior[true[i],])
-            Z10[i]~dcat(Z10prior[true[i],])
-            Z11[i]~dcat(Z11prior[true[i],])
-            Z12[i]~dcat(Z12prior[true[i],])
-            
+            for(j in 1:!!n_manifest){
+              Z[i,j]~dcat(Zprior[true[i],j,])
+            }
           }
           
-          theta[1:3]~ddirch(prior[])
+          theta[1:!!nclasses]~ddirch(prior[])
           
-          for(j in 1:3) {
-            Z1prior[j,1:4]~ddirch(prior4[])
-            Z2prior[j,1:4]~ddirch(prior4[])
-            Z3prior[j,1:4]~ddirch(prior4[])
-            Z4prior[j,1:4]~ddirch(prior4[])
-            Z5prior[j,1:4]~ddirch(prior4[])
-            Z6prior[j,1:4]~ddirch(prior4[])
-            Z7prior[j,1:4]~ddirch(prior4[])
-            Z8prior[j,1:4]~ddirch(prior4[])
-            Z9prior[j,1:4]~ddirch(prior4[])
-            Z10prior[j,1:4]~ddirch(prior4[])
-            Z11prior[j,1:4]~ddirch(prior4[])
-            Z12prior[j,1:4]~ddirch(prior4[])
+          for(c in 1:!!nclasses) {
+            for(j in 1:!!n_manifest) {
+              Zprior[c,j,1:4]~ddirch(prior4[])
+            }
           }
-          
           
         }
         
