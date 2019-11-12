@@ -64,60 +64,69 @@ bayes_lca = function(formula, data, nclasses, init, manifest, ...) {
 
 #' Contruct Bugs Model
 #'
-#' Construct bugs latent class model and return the result for use in the code
+#' Construct bugs latent class model in the form of a function for use in the code
 #' function bayes_lca
 #'
 #' @param x model matrix
 #'
 #' @return R function which contains Bugs model
 
-constr_bugs_model = function() {
+constr_bugs_model = function(N, n_manifest) {
   
-  # return the exact form we want to fit,
-  
-  bugs_model_func = function() {
+  constructor = function() {
     
-      for (i in 1:N){
-        true[i]~dcat(theta[])
+    bugs_model_enque = 
+      quo({
         
-        Z1[i]~dcat(Z1prior[true[i],])
-        Z2[i]~dcat(Z2prior[true[i],])
-        Z3[i]~dcat(Z3prior[true[i],])
-        Z4[i]~dcat(Z4prior[true[i],])
-        Z5[i]~dcat(Z5prior[true[i],])
-        Z6[i]~dcat(Z6prior[true[i],])
-        Z7[i]~dcat(Z7prior[true[i],])
-        Z8[i]~dcat(Z8prior[true[i],])
-        Z9[i]~dcat(Z9prior[true[i],])
-        Z10[i]~dcat(Z10prior[true[i],])
-        Z11[i]~dcat(Z11prior[true[i],])
-        Z12[i]~dcat(Z12prior[true[i],])
+        bugs_model_func = function() {
+          
+          for (i in 1:!!N){
+            true[i]~dcat(theta[])
+            
+            for(j in 1:!!n_manifest){}
+            Z1[i]~dcat(Z1prior[true[i],])
+            Z2[i]~dcat(Z2prior[true[i],])
+            Z3[i]~dcat(Z3prior[true[i],])
+            Z4[i]~dcat(Z4prior[true[i],])
+            Z5[i]~dcat(Z5prior[true[i],])
+            Z6[i]~dcat(Z6prior[true[i],])
+            Z7[i]~dcat(Z7prior[true[i],])
+            Z8[i]~dcat(Z8prior[true[i],])
+            Z9[i]~dcat(Z9prior[true[i],])
+            Z10[i]~dcat(Z10prior[true[i],])
+            Z11[i]~dcat(Z11prior[true[i],])
+            Z12[i]~dcat(Z12prior[true[i],])
+            
+          }
+          
+          theta[1:3]~ddirch(prior[])
+          
+          for(j in 1:3) {
+            Z1prior[j,1:4]~ddirch(prior4[])
+            Z2prior[j,1:4]~ddirch(prior4[])
+            Z3prior[j,1:4]~ddirch(prior4[])
+            Z4prior[j,1:4]~ddirch(prior4[])
+            Z5prior[j,1:4]~ddirch(prior4[])
+            Z6prior[j,1:4]~ddirch(prior4[])
+            Z7prior[j,1:4]~ddirch(prior4[])
+            Z8prior[j,1:4]~ddirch(prior4[])
+            Z9prior[j,1:4]~ddirch(prior4[])
+            Z10prior[j,1:4]~ddirch(prior4[])
+            Z11prior[j,1:4]~ddirch(prior4[])
+            Z12prior[j,1:4]~ddirch(prior4[])
+          }
+          
+          
+        }
         
-      }
-      
-      theta[1:3]~ddirch(prior[])
-      
-      for(j in 1:3) {
-        Z1prior[j,1:4]~ddirch(prior4[])
-        Z2prior[j,1:4]~ddirch(prior4[])
-        Z3prior[j,1:4]~ddirch(prior4[])
-        Z4prior[j,1:4]~ddirch(prior4[])
-        Z5prior[j,1:4]~ddirch(prior4[])
-        Z6prior[j,1:4]~ddirch(prior4[])
-        Z7prior[j,1:4]~ddirch(prior4[])
-        Z8prior[j,1:4]~ddirch(prior4[])
-        Z9prior[j,1:4]~ddirch(prior4[])
-        Z10prior[j,1:4]~ddirch(prior4[])
-        Z11prior[j,1:4]~ddirch(prior4[])
-        Z12prior[j,1:4]~ddirch(prior4[])
-      }
+      })
     
-    
+    return(bugs_model_enque)
   }
+ 
+  text_fun = as.character(quo_get_expr(constructor()))[2]
+  return(eval(parse(text = text_fun)))
+
   
-  return(bugs_model_func)
 }
-
-
-
 
