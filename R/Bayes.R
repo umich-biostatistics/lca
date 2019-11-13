@@ -10,6 +10,9 @@
 #' a regression model is to be fitted, specify a formula using R standard syntax,
 #' e.g., Y ~ age + sex + trt. Do not include manifest variables in the regression
 #' model specification. These will be appended internally as latent classes.
+#' @param family a description of the error distribution to 
+#' be used in the model. Currently the options are c("gaussian") with identity 
+#' link and c("binomial") which uses a logit link.
 #' @param data
 #' @param nclasses
 #' @param manifest character vector containing the names of each manifest variable,
@@ -26,7 +29,7 @@
 #' @return a named list of draws.
 #'
 
-bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir, 
+bayes_lca = function(formula, family, data, nclasses, manifest, inits, return.bugs, dir, 
                      n.chains, n.iter, parameters.to.save, ...) {
   
   # checks on input
@@ -39,6 +42,10 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
   
   if(!is.data.frame(data)) {
     stop("A data.frame is required to fit the model.")
+  }
+  
+  if(is.null(family)) {
+    stop("Family must be specified. Currently the options are 'gaussian' (identity link) and 'binomial' which uses a logit link.")
   }
   
   N = nrow(data)
@@ -98,13 +105,23 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
   )
   
   # construct R2WinBUGS input
+  regression = c()
+  response = c()
+  
+  if(family == "gaussian") {
+    regression = expr(yhat[i] <- x[i]*beta + C[i]*alpha)
+    response = expr(y[i] ~ dnorm(yhat[i], tau))
+  } else if(family == "binomial") {
+    regression = expr(logit(p[i]) <- x[i]*beta + C[i]*alpha)
+    response = expr(Y[i]~dbern(p[i]))
+  }
   
   # call R bugs model constructor
-  model = constr_bugs_model(N = N, n_manifest = n_manifest,
-                            nclasses = nclasses, regression = regression)
+  model = constr_bugs_model(N = N, n_manifest = n_manifest, nclasses = nclasses,
+                                regression = regression, response = response)
   # write model
   filename <- file.path(dir, "model.bug")
-  write.model(constr_bugs_model(N = N, n_manifest = n_manifest, nclasses = nclasses), filename)
+  write.model(model, filename)
   
   # Fit Bayesian latent class model
   samp_lca = bugs(data = dat_list, inits = inits,
@@ -135,7 +152,8 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
 #'
 #' @return R function which contains Bugs model
 
-constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression) {
+constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
+                             response) {
   
   constructor = function() {
     
