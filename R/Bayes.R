@@ -130,6 +130,8 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
 #' function bayes_lca
 #'
 #' @param x model matrix
+#' @param regression Expression which contains code for the response distribution,
+#' e.g. expr(stuff)
 #'
 #' @return R function which contains Bugs model
 
@@ -151,8 +153,10 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression) {
             
             # vectorize regression expression
             # vectorized multiplication?
-            yhat[i] <- x[i]*beta + C[i]*alpha
-            y[i]~dnorm(yhat[i],tau)
+            #yhat[i] <- x[i]*beta + C[i]*alpha
+            #y[i] ~ dnorm(yhat[i], tau)
+            !!regression
+            !!response
           }
           
           theta[1:!!nclasses]~ddirch(prior[])
