@@ -84,7 +84,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
       (1 - sum(pclass_prior))
   }
   
-  dat_list = vector(mode = "list", length = length(unique.manifest.levels) + 2)
+  dat_list = vector(mode = "list", length = length(unique.manifest.levels) + 3)
   name = vector(mode = "numeric", length = length(unique.manifest.levels))
   for(j in 1:length(unique.manifest.levels)) {
     name[j] = paste("prior", unique.manifest.levels[j], sep = "")
@@ -97,12 +97,17 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   }
   names(dat_list)
   
-  names(dat_list) = c(name, "prior", "Z")
+  names(dat_list) = c(name, "prior", "Z", "C")
   
   dat_list["prior"] =  pclass_prior
   dat_list["Z"] = structure(
     .Data=as.vector(Z),
     .Dim=c(N,n_manifest)
+  )
+  
+  dat_list["C"] = structure(
+    .Data=rep(0, nclasses * N),
+    .Dim=c(N,nclasses)
   )
   
   # construct R2WinBUGS input
@@ -175,6 +180,10 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
               Z[i,j]~dcat(Zprior[true[i],j,])
             }
             
+            for(k in 1:!!nclasses) {
+              C[i,k] = step(-true[i]+k) - step(-true[i]+k-1)
+            }
+            
             # vectorize regression expression
             # vectorized multiplication?
             #yhat[i] <- x[i]*beta + C[i]*alpha
@@ -185,6 +194,7 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
           
           theta[1:!!nclasses]~ddirch(prior[])
           
+          # need to generalize to all prior""[], make a series of arrays
           for(c in 1:!!nclasses) {
             for(j in 1:!!n_manifest) {
               Zprior[c,j,1:4]~ddirch(prior4[])
