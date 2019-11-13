@@ -19,9 +19,6 @@
 #' e.g., manifest = c("Z1", "med_3", "X5")
 #' @param inits list of initial values for WinBUGS. Defaults will be set if nothing
 #' is specified.
-#' @param return.bugs = FALSE. If TRUE, return the bugs model as a character string.
-#' This can be further edited to suit the researchers needs, e.g., by adding hyper-prior
-#' distributions.
 #' @param dir Specify full path to the directory where you want
 #' to store the WinBUGS output files and BUGS model file.
 #' @param ...
@@ -29,14 +26,14 @@
 #' @return a named list of draws.
 #'
 
-bayes_lca = function(formula, family, data, nclasses, manifest, inits, return.bugs, dir, 
+lcra = function(formula, family, data, nclasses, manifest, inits, dir, 
                      n.chains, n.iter, parameters.to.save, ...) {
   
   # checks on input
   
   # check for valid formula?
   
-  if(is.null(data)) {
+  if(missing(data)) {
     stop("A data set is required to fit the model.")
   }
   
@@ -44,8 +41,12 @@ bayes_lca = function(formula, family, data, nclasses, manifest, inits, return.bu
     stop("A data.frame is required to fit the model.")
   }
   
-  if(is.null(family)) {
+  if(missing(family)) {
     stop("Family must be specified. Currently the options are 'gaussian' (identity link) and 'binomial' which uses a logit link.")
+  }
+  
+  if(missing(dir)) {
+    dir = tempdir()
   }
   
   N = nrow(data)
@@ -131,11 +132,16 @@ bayes_lca = function(formula, family, data, nclasses, manifest, inits, return.bu
   
   # Results
   # return bugs fit
-  return(
+  
+  result = 
     list(model.frame = mf,
          model.matrix = x,
-         bugs.object = samp_lca)
-  )
+         bugs.object = samp_lca,
+         model = model)
+  
+  attr(result, "class") = "lcra"
+  
+  return(result)
   
 }
 
@@ -206,4 +212,23 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
   return(eval(parse(text = text_fun)))
   
 }
+
+
+#' Get the Bugs model
+#'
+#' Sometimes the user may want more flexibility in the model fit than 
+#' our program provides. In this case, the user can fit a close model and 
+#' use this function to retrieve the model as an R function. 
+#'
+#' @param fit an lcra fit object
+#'
+#' @return R function which contains Bugs model
+
+get_bugs_model = function(fit) {
+  if(class(fit) != "lcra") {
+    stop("Must be a lcra object to extract the Bugs model.")
+  }
+  return(fit$model)
+}
+
 

@@ -4,7 +4,7 @@
 \alias{constr_bugs_model}
 \title{Contruct Bugs Model}
 \usage{
-constr_bugs_model(N, n_manifest, n_beta, nclasses, regression)
+constr_bugs_model(N, n_manifest, n_beta, nclasses, regression, response)
 }
 \arguments{
 \item{regression}{Expression which contains code for the response distribution,
