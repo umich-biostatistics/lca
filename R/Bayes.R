@@ -49,11 +49,18 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
     dir = tempdir()
   }
   
+  if(missing(formula)) {
+    stop("Specify an R formula for the regression model to be fitted. 
+         If you only want the latent class analysis, set formula = NULL.")
+  }
+  
   N = nrow(data)
   n_manifest = length(manifest)
   
-  if(is.null(formula)) {regression = FALSE}
-  else {regression = TRUE}
+  if(is.null(formula)) {do_regression = FALSE}
+  else {do_regression = TRUE}
+  
+  # Convert all manifest variables to numeric 1,... nlevels?
   
   # construct a model frame (mf)
   
@@ -69,14 +76,15 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   x = model.matrix(mt, mf)
   
   # select manifest variables from model matrix
-  if(any(!(manifest %in% colnames(mf)))) {
+  if(any(!(manifest %in% colnames(data)))) {
     stop("At least one manifest variable name is not in the names of variables
-         in the model frame.")
+         in the data set.")
   }
   
-  Z = mf[,manifest]
+  Z = data[,manifest]
   
   unique.manifest.levels = unique(apply(Z, 2, function(x) {length(unique(x))}))
+  p.length = length(unique.manifest.levels)
   
   pclass_prior = round(rep(1/nclasses, nclasses), digits = 3)
   if(sum(pclass_prior) != 1){
@@ -84,7 +92,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
       (1 - sum(pclass_prior))
   }
   
-  dat_list = vector(mode = "list", length = length(unique.manifest.levels) + 3)
+  dat_list = vector(mode = "list", length = length(unique.manifest.levels) + 4)
   name = vector(mode = "numeric", length = length(unique.manifest.levels))
   for(j in 1:length(unique.manifest.levels)) {
     name[j] = paste("prior", unique.manifest.levels[j], sep = "")
@@ -95,22 +103,28 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
     }
     dat_list[[j]] = prior
   }
-  names(dat_list)
   
-  names(dat_list) = c(name, "prior", "Z", "C")
+  names(dat_list) = c(name, "prior", "Z", "C", "x")
   
-  dat_list["prior"] =  pclass_prior
-  dat_list["Z"] = structure(
-    .Data=as.vector(Z),
+  dat_list[["prior"]] =  pclass_prior
+  dat_list[["Z"]] = structure(
+    .Data=as.vector(as.matrix(Z)),
     .Dim=c(N,n_manifest)
   )
   
-  dat_list["C"] = structure(
-    .Data=rep(0, nclasses * N),
-    .Dim=c(N,nclasses)
+  dat_list[["C"]] = structure(
+    .Data=rep(0, (nclasses-1) * N),
+    .Dim=c(N,nclasses-1)
+  )
+  
+  dat_list[["x"]] = structure(
+    .Data=x,
+    .Dim=c(N,ncol(x))
   )
   
   # construct R2WinBUGS input
+  n_beta = ncol(x)
+  
   regression = c()
   response = c()
   
@@ -118,13 +132,14 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
     regression = expr(yhat[i] <- x[i]*beta + C[i]*alpha)
     response = expr(y[i] ~ dnorm(yhat[i], tau))
   } else if(family == "binomial") {
-    regression = expr(logit(p[i]) <- x[i]*beta + C[i]*alpha)
+    regression = expr(logit(p[i]) <- x[i,]*beta + C[i,]*alpha)
     response = expr(Y[i]~dbern(p[i]))
   }
   
   # call R bugs model constructor
-  model = constr_bugs_model(N = N, n_manifest = n_manifest, nclasses = nclasses,
-                                regression = regression, response = response)
+  model = constr_bugs_model(N = N, n_manifest = n_manifest, n_beta = n_beta,
+                            nclasses = nclasses, regression = regression, 
+                            response = response)
   # write model
   filename <- file.path(dir, "model.bug")
   write.model(model, filename)
@@ -180,7 +195,14 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
               Z[i,j]~dcat(Zprior[true[i],j,])
             }
             
-            for(k in 1:!!nclasses) {
+            for(j in 1:!!n_manifest){
+              
+              Z[i,j]~dcat(Zprior[true[i],j,1:nlevels[j]])
+              
+            }
+            
+            
+            for(k in 2:(!!nclasses)) {
               C[i,k] = step(-true[i]+k) - step(-true[i]+k-1)
             }
             
@@ -197,9 +219,11 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
           # need to generalize to all prior""[], make a series of arrays
           for(c in 1:!!nclasses) {
             for(j in 1:!!n_manifest) {
-              Zprior[c,j,1:4]~ddirch(prior4[])
+              Zprior[c,j,1:nlevels[j]]~ddirch(prior4[])
             }
-          }
+          } # need one of these double loops for each prior length?
+          
+          
           
           for(k in 1:!!n_beta) {
             beta[k]~dnorm(0,0.1)
@@ -240,5 +264,8 @@ get_bugs_model = function(fit) {
   }
   return(fit$model)
 }
+
+
+
 
 
