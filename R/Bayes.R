@@ -9,7 +9,7 @@
 #' @param formula If formula = NULL, LCA without regression model is fitted. If
 #' a regression model is to be fitted, specify a formula using R standard syntax,
 #' e.g., Y ~ age + sex + trt. Do not include manifest variables in the regression
-#' model specification. These will be appended internally.
+#' model specification. These will be appended internally as latent classes.
 #' @param data
 #' @param nclasses
 #' @param manifest character vector containing the names of each manifest variable,
@@ -116,7 +116,8 @@ bayes_lca = function(formula, data, nclasses, manifest, inits, return.bugs, dir,
   # return bugs fit
   return(
     list(model.frame = mf,
-         model.matrix = x)
+         model.matrix = x,
+         bugs.object = samp_lca)
   )
   
 }
