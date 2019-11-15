@@ -92,21 +92,31 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
       (1 - sum(pclass_prior))
   }
   
-  dat_list = vector(mode = "list", length = length(unique.manifest.levels) + 4)
-  name = vector(mode = "numeric", length = length(unique.manifest.levels))
+  dat_list = vector(mode = "list", length = 6)
+  #name = vector(mode = "numeric", length = length(unique.manifest.levels))
+  prior_mat = matrix(NA, nrow = 3, ncol = max(unique.manifest.levels))
   for(j in 1:length(unique.manifest.levels)) {
-    name[j] = paste("prior", unique.manifest.levels[j], sep = "")
+    #name[j] = paste("prior", unique.manifest.levels[j], sep = "")
     prior = round(rep(1/unique.manifest.levels[j], unique.manifest.levels[j]), digits = 3)
     if(sum(prior) != 1){
       prior[length(prior)] = prior[length(prior)] + 
         (1 - sum(prior))
     }
-    dat_list[[j]] = prior
+    if(length(prior) < length(prior_mat[j,])) {
+      fill = rep(NA, length = (length(prior_mat[j,]) - length(prior)))
+      prior = c(prior, fill)
+      prior_mat[j,] = prior
+    } else {
+      prior_mat[j,] = prior
+    }
   }
   
-  names(dat_list) = c(name, "prior", "Z", "C", "x")
+  names(dat_list) = c("prior_mat", "prior", "Z", "C", "x", "nlevels")
+  
+  dat_list[["prior_mat"]] =  prior_mat
   
   dat_list[["prior"]] =  pclass_prior
+  
   dat_list[["Z"]] = structure(
     .Data=as.vector(as.matrix(Z)),
     .Dim=c(N,n_manifest)
@@ -121,6 +131,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
     .Data=x,
     .Dim=c(N,ncol(x))
   )
+  
+  dat_list[["nlevels"]] = unique.manifest.levels
   
   # construct R2WinBUGS input
   n_beta = ncol(x)
@@ -178,7 +190,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
 #'
 #' @return R function which contains Bugs model
 
-constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
+constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
+                             regression, 
                              response) {
   
   constructor = function() {
@@ -196,14 +209,11 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
             }
             
             for(j in 1:!!n_manifest){
-              
               Z[i,j]~dcat(Zprior[true[i],j,1:nlevels[j]])
-              
             }
             
-            
             for(k in 2:(!!nclasses)) {
-              C[i,k] = step(-true[i]+k) - step(-true[i]+k-1)
+              C[i,k] <- step(-true[i]+k) - step(-true[i]+k-1)
             }
             
             # vectorize regression expression
@@ -218,12 +228,10 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
           
           # need to generalize to all prior""[], make a series of arrays
           for(c in 1:!!nclasses) {
-            for(j in 1:!!n_manifest) {
-              Zprior[c,j,1:nlevels[j]]~ddirch(prior4[])
+            for(j in 1:!!npriors) {
+              Zprior[c,j,1:nlevels[j]]~ddirch(prior_mat[j,1:nlevels[j]])
             }
-          } # need one of these double loops for each prior length?
-          
-          
+          } # need one of these double loops for each prior length
           
           for(k in 1:!!n_beta) {
             beta[k]~dnorm(0,0.1)
@@ -236,7 +244,6 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, regression,
           tau~dgamma(0.1,0.1)
           
         }
-        
       })
     
     return(bugs_model_enque)
