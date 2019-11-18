@@ -94,7 +94,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   
   dat_list = vector(mode = "list", length = 6)
   #name = vector(mode = "numeric", length = length(unique.manifest.levels))
-  prior_mat = matrix(NA, nrow = 3, ncol = max(unique.manifest.levels))
+  prior_mat = matrix(NA, nrow = length(unique.manifest.levels), 
+                     ncol = max(unique.manifest.levels))
   for(j in 1:length(unique.manifest.levels)) {
     #name[j] = paste("prior", unique.manifest.levels[j], sep = "")
     prior = round(rep(1/unique.manifest.levels[j], unique.manifest.levels[j]), digits = 3)
@@ -113,7 +114,10 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   
   names(dat_list) = c("prior_mat", "prior", "Z", "C", "x", "nlevels")
   
-  dat_list[["prior_mat"]] =  prior_mat
+  dat_list[["prior_mat"]] = structure(
+    .Data=as.vector(prior_mat),
+    .Dim=c(length(unique.manifest.levels), max(unique.manifest.levels))
+  )
   
   dat_list[["prior"]] =  pclass_prior
   
@@ -132,7 +136,9 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
     .Dim=c(N,ncol(x))
   )
   
-  dat_list[["nlevels"]] = unique.manifest.levels
+  nlevels = apply(Z, 2, function(x) {length(unique(x))})
+  names(nlevels) = NULL
+  dat_list[["nlevels"]] = nlevels
   
   # construct R2WinBUGS input
   n_beta = ncol(x)
@@ -141,17 +147,17 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   response = c()
   
   if(family == "gaussian") {
-    regression = expr(yhat[i] <- x[i]*beta + C[i]*alpha)
+    regression = expr(yhat[i] <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
     response = expr(y[i] ~ dnorm(yhat[i], tau))
   } else if(family == "binomial") {
-    regression = expr(logit(p[i]) <- x[i,]*beta + C[i,]*alpha)
+    regression = expr(logit(p[i]) <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
     response = expr(Y[i]~dbern(p[i]))
   }
   
   # call R bugs model constructor
   model = constr_bugs_model(N = N, n_manifest = n_manifest, n_beta = n_beta,
-                            nclasses = nclasses, regression = regression, 
-                            response = response)
+                            nclasses = nclasses, npriors = unique.manifest.levels, 
+                            regression = regression, response = response)
   # write model
   filename <- file.path(dir, "model.bug")
   write.model(model, filename)
@@ -205,21 +211,13 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
             true[i]~dcat(theta[])
             
             for(j in 1:!!n_manifest){
-              Z[i,j]~dcat(Zprior[true[i],j,])
-            }
-            
-            for(j in 1:!!n_manifest){
               Z[i,j]~dcat(Zprior[true[i],j,1:nlevels[j]])
             }
             
             for(k in 2:(!!nclasses)) {
-              C[i,k] <- step(-true[i]+k) - step(-true[i]+k-1)
+              C[i,k-1] <- step(-true[i]+k) - step(-true[i]+k-1)
             }
-            
-            # vectorize regression expression
-            # vectorized multiplication?
-            #yhat[i] <- x[i]*beta + C[i]*alpha
-            #y[i] ~ dnorm(yhat[i], tau)
+
             !!regression
             !!response
           }
@@ -237,8 +235,8 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
             beta[k]~dnorm(0,0.1)
           }
           
-          for(k in 1:!!nclasses) {
-            alpha[k]~dnorm(0,0.1)
+          for(k in 2:!!nclasses) {
+            alpha[k-1]~dnorm(0,0.1)
           }
           
           tau~dgamma(0.1,0.1)
