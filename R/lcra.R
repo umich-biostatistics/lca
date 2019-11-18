@@ -83,7 +83,10 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   
   Z = data[,manifest]
   
-  unique.manifest.levels = unique(apply(Z, 2, function(x) {length(unique(x))}))
+  
+  manifest.levels = apply(Z, 2, function(x) {length(unique(x))})
+  unique.manifest.levels = unique(manifest.levels)
+  
   p.length = length(unique.manifest.levels)
   
   pclass_prior = round(rep(1/nclasses, nclasses), digits = 3)
@@ -92,13 +95,13 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
       (1 - sum(pclass_prior))
   }
   
-  dat_list = vector(mode = "list", length = 6)
+  dat_list = vector(mode = "list", length = 5)
   #name = vector(mode = "numeric", length = length(unique.manifest.levels))
-  prior_mat = matrix(NA, nrow = length(unique.manifest.levels), 
+  prior_mat = matrix(NA, nrow = ncol(Z), 
                      ncol = max(unique.manifest.levels))
-  for(j in 1:length(unique.manifest.levels)) {
+  for(j in 1:length(manifest.levels)) {
     #name[j] = paste("prior", unique.manifest.levels[j], sep = "")
-    prior = round(rep(1/unique.manifest.levels[j], unique.manifest.levels[j]), digits = 3)
+    prior = round(rep(1/manifest.levels[j], manifest.levels[j]), digits = 3)
     if(sum(prior) != 1){
       prior[length(prior)] = prior[length(prior)] + 
         (1 - sum(prior))
@@ -112,11 +115,11 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
     }
   }
   
-  names(dat_list) = c("prior_mat", "prior", "Z", "C", "x", "nlevels")
+  names(dat_list) = c("prior_mat", "prior", "Z", "x", "nlevels")
   
   dat_list[["prior_mat"]] = structure(
     .Data=as.vector(prior_mat),
-    .Dim=c(length(unique.manifest.levels), max(unique.manifest.levels))
+    .Dim=c(length(manifest.levels), max(unique.manifest.levels))
   )
   
   dat_list[["prior"]] =  pclass_prior
@@ -126,10 +129,10 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
     .Dim=c(N,n_manifest)
   )
   
-  dat_list[["C"]] = structure(
-    .Data=rep(0, (nclasses-1) * N),
-    .Dim=c(N,nclasses-1)
-  )
+  # dat_list[["C"]] = structure(
+  #   .Data=rep(0, (nclasses-1) * N),
+  #   .Dim=c(N,nclasses-1)
+  # )
   
   dat_list[["x"]] = structure(
     .Data=x,
@@ -226,7 +229,7 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
           
           # need to generalize to all prior""[], make a series of arrays
           for(c in 1:!!nclasses) {
-            for(j in 1:!!npriors) {
+            for(j in 1:!!n_manifest) {
               Zprior[c,j,1:nlevels[j]]~ddirch(prior_mat[j,1:nlevels[j]])
             }
           } # need one of these double loops for each prior length
