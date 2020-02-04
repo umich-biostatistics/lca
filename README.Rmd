@@ -12,6 +12,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+# R package `lcra`
+
+A user-friendly interface for doing joint Bayesian latent class and regression analysis
+
 ## Overview
 
 This `R` package provides a user-friendly interface for fitting Bayesian joint lantend class and regression models. Unsing the standard R syntax, the user can specify the form of the regression model and the desired number of latent classes.
@@ -25,7 +29,7 @@ This package uses the R interface for WinBUGS called `R2WinBUGS`. The package `R
 Once the standalone `WinBUGS` program is installed, open R and run:
 
 If the devtools package is not yet installed, install it first:
-```{r}
+```{r, eval=FALSE}
 install.packages('devtools')
 library(devtools)
 ```
@@ -37,6 +41,25 @@ install_github('umich-biostatistics/lcra')
 library(lcra)
 ```
 
-## Usage
+## Example usage
 
-Examples
+The main function for the Bayesian Bayesian joint lantend class and regression model is `bayes_lca()`. Use `?bayes_lca()` for the R help file.
+
+Here is an example Bayesian latent class analysis on simulated data:
+
+```{r}
+
+```
+
+
+### Vignette
+
+Once the package is installed, run the following to launch a vignette with detailed examples of the package functions.
+
+```{r, eval=FALSE}
+
+```
+
+### Current Suggested Citation
+
+"Methods to account for uncertainty in latent class assignments when using latent classes as predictors in regression models, with application to acculturation strategy measures" (2020) In press at Epidemiology. <doi:10.1097/EDE.0000000000001139>
