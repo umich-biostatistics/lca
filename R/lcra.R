@@ -13,18 +13,20 @@
 #' @param family a description of the error distribution to 
 #' be used in the model. Currently the options are c("gaussian") with identity 
 #' link and c("binomial") which uses a logit link.
-#' @param data
-#' @param nclasses
+#' @param data data.frame with the column names specified in the regression formula
+#' and the manifest argument.
+#' @param nclasses numeric, number of latent classes
 #' @param manifest character vector containing the names of each manifest variable,
 #' e.g., manifest = c("Z1", "med_3", "X5")
 #' @param inits list of initial values for R2WinBUGS. Defaults will be set if nothing
 #' is specified. Inits must be a list with n.chains elements; each element of the list
 #' is itself a list of starting values for the WinBUGS model. 
-#' 
 #' @param dir Specify full path to the directory where you want
 #' to store the WinBUGS output files and BUGS model file.
 #' @param n.chains number of Markov chains.
 #' @param n.iter number of total iterations per chain including burn-in.
+#' @param parameters.to.save character vector of names of all paramters to be saved.
+#' If unspecified, all will be saved.
 #' @param n.burnin length of burn-in, i.e., number of iterations to discard
 #' at the beginning. Default is n.iter/2.
 #' @param n.thin thinning rate. Must be a positive integer. Set n.thin > 1 to save
@@ -48,7 +50,7 @@
 #'
 
 lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir, 
-                     n.chains, n.iter, parameters.to.save, ...) {
+                     n.chains, n.iter, parameters.to.save, n.burnin, n.thin, useWINE = FALSE, WINE, ...) {
   
   # checks on input
   
@@ -74,6 +76,28 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
     stop("Specify an R formula for the regression model to be fitted. 
          If you only want the latent class analysis, set formula = NULL.")
   }
+  
+  get_os <- function(){
+    sysinf <- Sys.info()
+    if (!is.null(sysinf)){
+      os <- sysinf['sysname']
+      if (os == 'Darwin')
+        os <- "osx"
+    } else { 
+      os <- .Platform$OS.type
+      if (grepl("^darwin", R.version$os))
+        os <- "osx"
+      if (grepl("linux-gnu", R.version$os))
+        os <- "linux"
+    }
+    tolower(os)
+  }
+  
+  OS = get_os()
+  
+  if(OS == 'windows') useWINE = FALSE
+  else if(OS == 'osx') useWINE = TRUE
+  else if(OS == 'linux') useWINE = TRUE
   
   N = nrow(data)
   n_manifest = length(manifest)
@@ -190,10 +214,17 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   write.model(model, filename)
   
   # Fit Bayesian latent class model
-  samp_lrca = bugs(data = dat_list, inits = inits,
-                  model.file = filename, n.chains = n.chains, 
-                  n.iter = n.iter, parameters.to.save = parameters.to.save, 
-                  debug = TRUE)
+  samp_lrca = bugs(data = dat_list, 
+                   inits = inits,
+                   model.file = filename, 
+                   n.chains = n.chains, 
+                   n.iter = n.iter, 
+                   parameters.to.save = parameters.to.save, 
+                   debug = FALSE, 
+                   n.burnin = n.burnin, 
+                   n.thin = n.thin, 
+                   useWINE = useWINE, 
+                   WINE = WINE, ...)
   
   # Results
   # return bugs fit
@@ -310,8 +341,7 @@ print.lcra = function(x, ...) {
   if(class(x) != "lcra") {
     stop("Must be a lcra object to extract the Bugs model.")
   }
-  
-  return(print.bugs(x, ...))
+  return(print.bugs(x$bugs.object, ...))
 }
 
 
@@ -326,8 +356,7 @@ plot.lcra = function(x, ...) {
   if(class(x) != "lcra") {
     stop("Must be a lcra object to extract the Bugs model.")
   }
-  
-  return(plot.bugs(x, ...))
+  return(plot.bugs(x$bugs.object, ...))
 }
 
 
