@@ -1,7 +1,7 @@
 
-#' Bayesian Latent Class Analysis
+#' Bayesian Latent Class Regression Analysis
 #' 
-#' Perform Bayesian LCA
+#' Perform Bayesian LCRA
 #'
 #' Given a set of categorical predictors, draw posterior distribution of 
 #' probability of class membership for each observation.
@@ -75,6 +75,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   mt = attr(mf, "terms")
   x = model.matrix(mt, mf)
   
+  y = mf$y
+  
   # select manifest variables from model matrix
   if(any(!(manifest %in% colnames(data)))) {
     stop("At least one manifest variable name is not in the names of variables
@@ -95,7 +97,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
       (1 - sum(pclass_prior))
   }
   
-  dat_list = vector(mode = "list", length = 5)
+  dat_list = vector(mode = "list", length = 6)
   #name = vector(mode = "numeric", length = length(unique.manifest.levels))
   prior_mat = matrix(NA, nrow = ncol(Z), 
                      ncol = max(unique.manifest.levels))
@@ -115,7 +117,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
     }
   }
   
-  names(dat_list) = c("prior_mat", "prior", "Z", "x", "nlevels")
+  names(dat_list) = c("prior_mat", "prior", "Z", "y", "x", "nlevels")
   
   dat_list[["prior_mat"]] = structure(
     .Data=as.vector(prior_mat),
@@ -134,6 +136,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   #   .Dim=c(N,nclasses-1)
   # )
   
+  dat_list[["y"]] = y
+  
   dat_list[["x"]] = structure(
     .Data=x,
     .Dim=c(N,ncol(x))
@@ -150,11 +154,11 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   response = c()
   
   if(family == "gaussian") {
-    regression = expr(yhat[i] <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
     response = expr(y[i] ~ dnorm(yhat[i], tau))
+    regression = expr(yhat[i] <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
   } else if(family == "binomial") {
-    regression = expr(logit(p[i]) <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
     response = expr(Y[i]~dbern(p[i]))
+    regression = expr(logit(p[i]) <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
   }
   
   # call R bugs model constructor
@@ -220,9 +224,10 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
             for(k in 2:(!!nclasses)) {
               C[i,k-1] <- step(-true[i]+k) - step(-true[i]+k-1)
             }
-
-            !!regression
+            
             !!response
+            !!regression
+            
           }
           
           theta[1:!!nclasses]~ddirch(prior[])
@@ -272,8 +277,4 @@ get_bugs_model = function(fit) {
   }
   return(fit$model)
 }
-
-
-
-
 
