@@ -17,16 +17,37 @@
 #' @param nclasses
 #' @param manifest character vector containing the names of each manifest variable,
 #' e.g., manifest = c("Z1", "med_3", "X5")
-#' @param inits list of initial values for WinBUGS. Defaults will be set if nothing
-#' is specified.
+#' @param inits list of initial values for R2WinBUGS. Defaults will be set if nothing
+#' is specified. Inits must be a list with n.chains elements; each element of the list
+#' is itself a list of starting values for the WinBUGS model. 
+#' 
 #' @param dir Specify full path to the directory where you want
 #' to store the WinBUGS output files and BUGS model file.
+#' @param n.chains number of Markov chains.
+#' @param n.iter number of total iterations per chain including burn-in.
+#' @param n.burnin length of burn-in, i.e., number of iterations to discard
+#' at the beginning. Default is n.iter/2.
+#' @param n.thin thinning rate. Must be a positive integer. Set n.thin > 1 to save
+#' memory and computing time if n.iter is large. 
+#' @param useWINE logical, attempt to use the Wine emulator to run WinBUGS, defaults
+#' to FALSE on Windows and TRUE otherwise.
+#' @param WINE character, path to WINE binary file. If not provided, the program will
+#' attempt to find the WINE installation on your machine.
 #' @param ...
+#' 
+#' @details 
+#' Details on running lcra on different operating systems:
+#' 
+#' * Microsoft Windows: no problems or additional set-up required
+#' 
+#' * Linux, Mac OS X, Unix: possible with the Wine emulator via useWine = TRUE.
+#' Wine is a standalone program needed to emulate a Windows system on non-Windows
+#' machines.
 #' 
 #' @return a named list of draws.
 #'
 
-lcra = function(formula, family, data, nclasses, manifest, inits, dir, 
+lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir, 
                      n.chains, n.iter, parameters.to.save, ...) {
   
   # checks on input
@@ -84,7 +105,6 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   }
   
   Z = data[,manifest]
-  
   
   manifest.levels = apply(Z, 2, function(x) {length(unique(x))})
   unique.manifest.levels = unique(manifest.levels)
@@ -170,7 +190,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   write.model(model, filename)
   
   # Fit Bayesian latent class model
-  samp_lca = bugs(data = dat_list, inits = inits,
+  samp_lrca = bugs(data = dat_list, inits = inits,
                   model.file = filename, n.chains = n.chains, 
                   n.iter = n.iter, parameters.to.save = parameters.to.save, 
                   debug = TRUE)
@@ -181,7 +201,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits, dir,
   result = 
     list(model.frame = mf,
          model.matrix = x,
-         bugs.object = samp_lca,
+         bugs.object = samp_lcra,
          model = model)
   
   attr(result, "class") = "lcra"
@@ -277,4 +297,43 @@ get_bugs_model = function(fit) {
   }
   return(fit$model)
 }
+
+
+#' Printing an lcra object
+#' 
+#' Print the lcra model output using print.bugs.
+#' 
+#' @param x an object of class 'lcra', see lcra() for details
+#' @param ... further arguments to print
+
+print.lcra = function(x, ...) {
+  if(class(x) != "lcra") {
+    stop("Must be a lcra object to extract the Bugs model.")
+  }
+  
+  return(print.bugs(x, ...))
+}
+
+
+#' Plotting an lcra object
+#' 
+#' Plot the lcra model output using plot.bugs.
+#' 
+#' @param x an object of class 'lcra', see lcra() for details
+#' @param ... further arguments to plot
+
+plot.lcra = function(x, ...) {
+  if(class(x) != "lcra") {
+    stop("Must be a lcra object to extract the Bugs model.")
+  }
+  
+  return(plot.bugs(x, ...))
+}
+
+
+
+
+
+
+
 
