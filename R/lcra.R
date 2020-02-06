@@ -50,7 +50,7 @@
 #'
 
 lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir, 
-                     n.chains, n.iter, parameters.to.save, n.burnin, n.thin, useWINE = FALSE, WINE, ...) {
+                     n.chains = 3, n.iter = 2000, parameters.to.save, n.burnin = n.iter/2, n.thin = 1, useWINE = FALSE, WINE, ...) {
   
   # checks on input
   
@@ -214,7 +214,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   write.model(model, filename)
   
   # Fit Bayesian latent class model
-  samp_lrca = bugs(data = dat_list, 
+  samp_lcra = bugs(data = dat_list, 
                    inits = inits,
                    model.file = filename, 
                    n.chains = n.chains, 
@@ -341,7 +341,7 @@ print.lcra = function(x, ...) {
   if(class(x) != "lcra") {
     stop("Must be a lcra object to extract the Bugs model.")
   }
-  return(print.bugs(x$bugs.object, ...))
+  return(R2WinBUGS:::print.bugs(x$bugs.object, ...))
 }
 
 
@@ -356,7 +356,7 @@ plot.lcra = function(x, ...) {
   if(class(x) != "lcra") {
     stop("Must be a lcra object to extract the Bugs model.")
   }
-  return(plot.bugs(x$bugs.object, ...))
+  return(R2WinBUGS:::plot.bugs(x$bugs.object, ...))
 }
 
 
