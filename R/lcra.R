@@ -1,10 +1,9 @@
 
-#' Bayesian Latent Class Regression Analysis
-#' 
-#' Perform Bayesian LCRA
+#' Joint Bayesian Latent Class and Regression Analysis
 #'
-#' Given a set of categorical predictors, draw posterior distribution of 
-#' probability of class membership for each observation.
+#' Given a set of categorical manifest outcomes, identify unmeasured class membership
+#' among subjects, and use latent class membership to predict regression outcome
+#' y jointly with a set of regressors.
 #' 
 #' @param formula If formula = NULL, LCA without regression model is fitted. If
 #' a regression model is to be fitted, specify a formula using R standard syntax,
@@ -46,11 +45,22 @@
 #' Wine is a standalone program needed to emulate a Windows system on non-Windows
 #' machines.
 #' 
-#' @return a named list of draws.
+#' @references “Methods to account for uncertainty in latent class assignments 
+#' when using latent classes as predictors in regression models, with application 
+#' to acculturation strategy measures” (2020) In press at Epidemiology. 
+#' doi:10.1097/EDE.0000000000001139
+#' 
+#' @examples 
+#' 
+#' 
+#' @return 
+#' 
+#' 
 #'
 
 lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir, 
-                     n.chains = 3, n.iter = 2000, parameters.to.save, n.burnin = n.iter/2, n.thin = 1, useWINE = FALSE, WINE, ...) {
+                n.chains = 3, n.iter = 2000, parameters.to.save, n.burnin = n.iter/2, 
+                n.thin = 1, useWINE = FALSE, WINE, ...) {
   
   # checks on input
   
