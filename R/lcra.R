@@ -238,9 +238,24 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   
   # Results
   # return bugs fit
+  sims.array = samp_lcra$sims.array
+  sims.list = samp_lcra$sims.list
+  sims.matrix = samp_lcra$sims.matrix
+  summary = samp_lcra$summary
+  mean = samp_lcra$mean
+  sd = samp_lcra$sd
+  median = samp_lcra$median
+  
   
   result = 
-    list(model.frame = mf,
+    list(sims.array = sims.array,
+         sims.list = sims.list,
+         sims.matrix = sims.matrix,
+         summary = summary,
+         mean = mean,
+         sd = sd,
+         median = median,
+         model.frame = mf,
          model.matrix = x,
          bugs.object = samp_lcra,
          model = model)
