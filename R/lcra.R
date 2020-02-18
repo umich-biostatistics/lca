@@ -45,16 +45,219 @@
 #' Wine is a standalone program needed to emulate a Windows system on non-Windows
 #' machines.
 #' 
-#' @references “Methods to account for uncertainty in latent class assignments 
+#' @references "Methods to account for uncertainty in latent class assignments 
 #' when using latent classes as predictors in regression models, with application 
-#' to acculturation strategy measures” (2020) In press at Epidemiology. 
+#' to acculturation strategy measures" (2020) In press at Epidemiology. 
 #' doi:10.1097/EDE.0000000000001139
 #' 
 #' @examples 
 #' 
+#' # Data sets 1 and 2
+#' data('paper_sim')
+#' data('paper_sim_binary')
+#' 
+#' # Set initial values
+#' inits =
+#'   list(
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2),
+#'       tau = 0.5
+#'     ),
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2),
+#'       tau = 0.5
+#'     ),
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2),
+#'       tau = 0.5
+#'     )
+#'   )
+#' 
+#' inits_binary =
+#'   list(
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2)
+#'     ),
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2)
+#'     ),
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2)
+#'     )
+#'   )
+#' 
+#' # Fit model 1
+#' fit.gaus_paper =
+#'   lcra(
+#'     formula = Y ~ X1 + X2,
+#'     family = "gaussian",
+#'     data = paper_sim,
+#'     nclasses = 3,
+#'     manifest = paste0("Z", 1:10),
+#'     inits = inits,
+#'     dir = tempdir(),
+#'     n.chains = 3,
+#'     n.iter = 5000,
+#'     parameters.to.save = c("theta", "beta", "true", "alpha")
+#'   )
+#' 
+#' # Model 1 results
+#' print(fit.gaus_paper, digits = 3)
+#' plot(fit.gaus_paper)
+#' 
+#' # Extract results
+#' fit.gaus_paper$median$true
+#' fit.gaus_paper$mean$beta
+#' fit.gaus_paper$mean$alpha
+#' 
+#' # Fit model 2
+#' fit.binom_paper = 
+#'   lcra(
+#'     formula = Y ~ X1 + X2,
+#'     family = "binomial",
+#'     data = paper_sim_binary,
+#'     nclasses = 3,
+#'     manifest = paste0("Z", 1:10),
+#'     inits = inits_binary,
+#'     dir = tempdir(),
+#'     n.chains = 3,
+#'     n.iter = 5000,
+#'     parameters.to.save = c("theta", "beta", "true", "alpha")
+#'   )
+#' 
+#' # Model 2 results
+#' print(fit.binom_paper, digits = 3)
+#' plot(fit.binom_paper)
+#' 
+#' # Extract results
+#' fit.binom_paper$median$true
+#' fit.binom_paper$mean$beta
+#' fit.binom_paper$mean$alpha
+#' 
+#' 
+#' # Data sets 3 and 4
+#' data('latent3')
+#' data('latent3_binary')
+#' 
+#' # Set initial values
+#' inits =
+#'   list(
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2),
+#'       tau = 0.5
+#'     ),
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2),
+#'       tau = 0.5
+#'     ),
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2),
+#'       tau = 0.5
+#'     )
+#'   )
+#' 
+#' inits_binary =
+#'   list(
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2)
+#'     ),
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2)
+#'     ),
+#'     list(
+#'       theta = c(0.33, 0.33, 0.34),
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2)
+#'     )
+#'   )
+#' 
+#' # Fit model 3
+#' fit.gaus_latent3 =
+#'   lcra(
+#'     formula = y ~ x1 + x2 + x3 + x4,
+#'     family = "gaussian",
+#'     data = latent3,
+#'     nclasses = 3,
+#'     manifest = paste0("Z", 1:10),
+#'     inits = inits,
+#'     dir = tempdir(),
+#'     n.chains = 3,
+#'     n.iter = 5000,
+#'     parameters.to.save = c("theta", "beta", "true", "alpha")
+#'   )
+#' 
+#' # Model 3 results
+#' print(fit.gaus_latent3, digits = 3)
+#' plot(fit.gaus_latent3)
+#' 
+#' # Extract results
+#' fit.gaus_latent3$median$true
+#' fit.gaus_latent3$mean$beta
+#' fit.gaus_latent3$mean$alpha
+#' 
+#' # Fit model 4
+#' fit.binom_latent3 = 
+#'   lcra(
+#'     formula = y ~ x1 + x2 + x3 + x4,
+#'     family = "binomial",
+#'     data = latent3_binary,
+#'     nclasses = 3,
+#'     manifest = paste0("Z", 1:10),
+#'     inits = inits_binary,
+#'     dir = tempdir(),
+#'     n.chains = 3,
+#'     n.iter = 5000,
+#'     parameters.to.save = c("theta", "beta", "true", "alpha")
+#'   )
+#' 
+#' # Model 4 results
+#' print(fit.binom_latent3, digits = 3)
+#' plot(fit.binom_latent3)
+#' 
+#' # Extract results
+#' fit.binom_latent3$median$true
+#' fit.binom_latent3$mean$beta
+#' fit.binom_latent3$mean$alpha
 #' 
 #' @return 
-#' 
+#' A list containing the following items:
+#' * **sims.array**: 3-dimensional array of simulation output, with dimensions n, 
+#' n.chains, and length of combined parameter vector.
+#' * **sims.list**: list of simulated parameters: for each scalar parameter, 
+#' a vector of length n.sims for each vector parameter; a 2-way array of simulations, 
+#' for each matrix parameter.
+#' * **sims.matrix**: matrix of simulation output, with n.chains x n rows and 
+#' one column for each element of each saved parameter.
+#' * **summary**: summary statistics and convergence information for each saved parameter.
+#' * **mean**: a list of the estimated parameter means.
+#' * **sd**: a list of the estimated parameter standard deviations.
+#' * **median**: a list of the estimated parameter medians.
+#' * **model.frame**: the model frame.
+#' * **model.matrix**: the model matrix.
+#' * **bugs.object**: the complete bugs object.
+#' * **model**: the BUGS model as a function.
 #' 
 #'
 
