@@ -19,6 +19,7 @@ lcra(
   n.thin = 1,
   useWINE = FALSE,
   WINE,
+  debug = FALSE,
   ...
 )
 }
@@ -65,6 +66,8 @@ to FALSE on Windows and TRUE otherwise.}
 
 \item{WINE}{character, path to WINE binary file. If not provided, the program will
 attempt to find the WINE installation on your machine.}
+
+\item{debug}{logical, keep WinBUGS open debug, inspect chains and summary.}
 
 \item{...}{}
 }
