@@ -211,7 +211,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
     response = expr(y[i] ~ dnorm(yhat[i], tau))
     regression = expr(yhat[i] <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
   } else if(family == "binomial") {
-    response = expr(Y[i]~dbern(p[i]))
+    response = expr(y[i] ~ dbern(p[i]))
     regression = expr(logit(p[i]) <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
   }
   
