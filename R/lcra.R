@@ -1,6 +1,6 @@
 
 #' Joint Bayesian Latent Class and Regression Analysis
-#'
+#' 
 #' Given a set of categorical manifest outcomes, identify unmeasured class membership
 #' among subjects, and use latent class membership to predict regression outcome
 #' y jointly with a set of regressors.
@@ -34,6 +34,7 @@
 #' to FALSE on Windows and TRUE otherwise.
 #' @param WINE character, path to WINE binary file. If not provided, the program will
 #' attempt to find the WINE installation on your machine.
+#' @param debug logical, keep WinBUGS open debug, inspect chains and summary.
 #' @param ...
 #' 
 #' @details 
@@ -259,11 +260,10 @@
 #' * **bugs.object**: the complete bugs object.
 #' * **model**: the BUGS model as a function.
 #' 
-#'
 
 lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir, 
                 n.chains = 3, n.iter = 2000, parameters.to.save, n.burnin = n.iter/2, 
-                n.thin = 1, useWINE = FALSE, WINE, ...) {
+                n.thin = 1, useWINE = FALSE, WINE, debug = FALSE, ...) {
   
   # checks on input
   
@@ -433,7 +433,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
                    n.chains = n.chains, 
                    n.iter = n.iter, 
                    parameters.to.save = parameters.to.save, 
-                   debug = FALSE, 
+                   debug = debug, 
                    n.burnin = n.burnin, 
                    n.thin = n.thin, 
                    useWINE = useWINE, 
