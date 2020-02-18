@@ -1,2 +1,4 @@
-^lcra\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
+^README\.Rmd$
+vignettes/
