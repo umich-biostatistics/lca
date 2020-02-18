@@ -1,2 +1,4 @@
 
 exportPattern("^[^\\.]")
+importFrom(rlang, expr)
+importFrom(R2WinBUGS, bugs)
