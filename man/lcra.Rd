@@ -178,8 +178,8 @@ plot(fit.gaus_paper)
 
 # Extract results
 fit.gaus_paper$median$true
-fit.gaus_paper$mean$beta
-fit.gaus_paper$mean$alpha
+fit.gaus_paper$median$beta
+fit.gaus_paper$median$alpha
 
 # Fit model 2
 fit.binom_paper = 
@@ -202,8 +202,8 @@ plot(fit.binom_paper)
 
 # Extract results
 fit.binom_paper$median$true
-fit.binom_paper$mean$beta
-fit.binom_paper$mean$alpha
+fit.binom_paper$median$beta
+fit.binom_paper$median$alpha
 
 
 # Data sets 3 and 4
@@ -273,8 +273,8 @@ plot(fit.gaus_latent3)
 
 # Extract results
 fit.gaus_latent3$median$true
-fit.gaus_latent3$mean$beta
-fit.gaus_latent3$mean$alpha
+fit.gaus_latent3$median$beta
+fit.gaus_latent3$median$alpha
 
 # Fit model 4
 fit.binom_latent3 = 
@@ -297,8 +297,8 @@ plot(fit.binom_latent3)
 
 # Extract results
 fit.binom_latent3$median$true
-fit.binom_latent3$mean$beta
-fit.binom_latent3$mean$alpha
+fit.binom_latent3$median$beta
+fit.binom_latent3$median$alpha
 }
 
 }
