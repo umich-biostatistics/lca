@@ -201,7 +201,7 @@
 #'     family = "gaussian",
 #'     data = latent3,
 #'     nclasses = 3,
-#'     manifest = paste0("Z", 1:10),
+#'     manifest = paste0("Z", 1:12),
 #'     inits = inits,
 #'     dir = tempdir(),
 #'     n.chains = 3,
@@ -225,7 +225,7 @@
 #'     family = "binomial",
 #'     data = latent3_binary,
 #'     nclasses = 3,
-#'     manifest = paste0("Z", 1:10),
+#'     manifest = paste0("Z", 1:12),
 #'     inits = inits_binary,
 #'     dir = tempdir(),
 #'     n.chains = 3,
@@ -344,6 +344,19 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   Z = data[,manifest]
   
   manifest.levels = apply(Z, 2, function(x) {length(unique(x))})
+  
+  Z_new =
+    lapply(names(manifest.levels), function(x) {
+      new_labels = 1:manifest.levels[x]
+      column = Z[, x]
+      new_column = as.numeric(factor(column, levels = unique(column), labels = new_labels))
+      new_column
+    })
+  
+  Z_new = as.data.frame(do.call(cbind, Z_new))
+  names(Z_new) = names(manifest.levels)
+  Z = Z_new
+  
   unique.manifest.levels = unique(manifest.levels)
   
   p.length = length(unique.manifest.levels)
