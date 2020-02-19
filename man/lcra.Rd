@@ -59,7 +59,7 @@ to store the WinBUGS output files and BUGS model file.}
 
 \item{n.iter}{number of total iterations per chain including burn-in.}
 
-\item{parameters.to.save}{character vector of names of all paramters to be saved.
+\item{parameters.to.save}{character vector of names of all parameters to be saved.
 If unspecified, all will be saved.}
 
 \item{n.burnin}{length of burn-in, i.e., number of iterations to discard

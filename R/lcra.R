@@ -31,7 +31,7 @@
 #' to store the WinBUGS output files and BUGS model file.
 #' @param n.chains number of Markov chains.
 #' @param n.iter number of total iterations per chain including burn-in.
-#' @param parameters.to.save character vector of names of all paramters to be saved.
+#' @param parameters.to.save character vector of names of all parameters to be saved.
 #' If unspecified, all will be saved.
 #' @param n.burnin length of burn-in, i.e., number of iterations to discard
 #' at the beginning. Default is n.iter/2.
