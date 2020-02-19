@@ -106,7 +106,7 @@ machines.
 }
 }
 \examples{
-
+\dontrun{
 # Data sets 1 and 2
 data('paper_sim')
 data('paper_sim_binary')
@@ -295,6 +295,7 @@ plot(fit.binom_latent3)
 fit.binom_latent3$median$true
 fit.binom_latent3$mean$beta
 fit.binom_latent3$mean$alpha
+}
 
 }
 \references{

@@ -52,7 +52,7 @@
 #' doi:10.1097/EDE.0000000000001139
 #' 
 #' @examples 
-#' 
+#' \dontrun{
 #' # Data sets 1 and 2
 #' data('paper_sim')
 #' data('paper_sim_binary')
@@ -241,6 +241,7 @@
 #' fit.binom_latent3$median$true
 #' fit.binom_latent3$mean$beta
 #' fit.binom_latent3$mean$alpha
+#' }
 #' 
 #' @return 
 #' A list containing the following items:
@@ -482,8 +483,6 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   
 }
 
-
-
 #' Contruct Bugs Model
 #'
 #' Construct bugs latent class model in the form of a function for use in the code
@@ -552,7 +551,6 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
   
 }
 
-
 #' Get the Bugs model
 #'
 #' Sometimes the user may want more flexibility in the model fit than 
@@ -570,7 +568,6 @@ get_bugs_model = function(fit) {
   return(fit$model)
 }
 
-
 #' Printing an lcra object
 #' 
 #' Print the lcra model output using print.bugs.
@@ -585,7 +582,6 @@ print.lcra = function(x, ...) {
   return(R2WinBUGS:::print.bugs(x$bugs.object, ...))
 }
 
-
 #' Plotting an lcra object
 #' 
 #' Plot the lcra model output using plot.bugs.
@@ -599,11 +595,3 @@ plot.lcra = function(x, ...) {
   }
   return(R2WinBUGS:::plot.bugs(x$bugs.object, ...))
 }
-
-
-
-
-
-
-
-

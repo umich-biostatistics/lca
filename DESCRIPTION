@@ -15,7 +15,7 @@ Authors@R:
     person(given = "Zhangchen", family = "Zhao", role = c("aut"), email = "zczhao@umich.edu"),
     person(given = "Michael", family = "Kleinsasser", role = c("cre"), email = "mkleinsa@umich.edu")
     )
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Biarch: true
@@ -27,6 +27,5 @@ Imports:
 SystemRequirements: GNU make
 URL: https://github.com/umich-biostatistics/lcra
 BugReports: https://github.com/umich-biostatistics/lcra/issues
-VignetteBuilder: knitr
 RoxygenNote: 7.0.2
 Roxygen: list(markdown = TRUE)
