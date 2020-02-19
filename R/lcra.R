@@ -345,7 +345,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   
   mt = attr(mf, "terms")
   x = model.matrix(mt, mf)
-  x = x[,!colnames(x) %in% c('(Intercept)')]
+  x = x[,!colnames(x) %in% c('(Intercept)'), drop = FALSE]
   
   y = mf$y
   
@@ -355,7 +355,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
          in the data set.")
   }
   
-  Z = data[,manifest]
+  Z = data[,manifest, drop = FALSE]
   
   lapply(Z, function(x) {
     if(!is.numeric(x)) {
