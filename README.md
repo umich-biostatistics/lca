@@ -8,12 +8,25 @@
 [![](https://img.shields.io/github/languages/code-size/umich-biostatistics/lcra.svg)](https://github.com/umich-biostatistics/lcra)
 
 A user-friendly interface for doing joint Bayesian latent class and
-regression analysis
+regression analysis with binary and continuous outcomes.
+
+Simply specify the regression model and number of classes and lcra
+predicts class membership for each observation and accounts for
+uncertainty in class membership in the estimation of the regression
+parameters.
+
+## Why use this package?
+
+This is the only package available for joint latent class and regression
+analysis. Other packages use a sequential procedure, where latent
+classes are determined prior to fitting the usual regression model. The
+only Bayesian alternative will require you to program the model by hand,
+which can be time consuming.
 
 ## Overview
 
 This `R` package provides a user-friendly interface for fitting Bayesian
-joint lantend class and regression models. Unsing the standard R syntax,
+joint latent class and regression models. Using the standard R syntax,
 the user can specify the form of the regression model and the desired
 number of latent classes.
 
@@ -56,11 +69,10 @@ library(lcra)
 The main function for the joint model is `lcra()`. Use `?lcra` for the R
 help file.
 
-Here is an example Bayesian latent class analysis on simulated data with
-continuous and discrete outcomed:
+Here is an example analysis on simulated data with continuous and
+discrete outcomes:
 
 ``` r
-# Data sets 1 and 2
 data('paper_sim')
 data('paper_sim_binary')
 
@@ -69,20 +81,20 @@ inits =
   list(
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3),
       tau = 0.5
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3),
       tau = 0.5
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3),
       tau = 0.5
     )
   )
@@ -91,18 +103,18 @@ inits_binary =
   list(
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2)
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3)
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2)
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3)
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2)
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3)
     )
   )
 
@@ -127,8 +139,8 @@ plot(fit.gaus_paper)
 
 # Extract results
 fit.gaus_paper$median$true
-fit.gaus_paper$mean$beta
-fit.gaus_paper$mean$alpha
+fit.gaus_paper$median$beta
+fit.gaus_paper$median$alpha
 
 # Fit model 2
 fit.binom_paper = 
@@ -151,18 +163,12 @@ plot(fit.binom_paper)
 
 # Extract results
 fit.binom_paper$median$true
-fit.binom_paper$mean$beta
-fit.binom_paper$mean$alpha
+fit.binom_paper$median$beta
+fit.binom_paper$median$alpha
 ```
 
-### Vignette
-
-Once the package is installed, run the following to launch a vignette
-with detailed examples of the package functions.
-
-``` r
-vignette('learn-lcra')
-```
+For more examples, run `?lcra` at the console, and scroll to Examples in
+the documentation file.
 
 ### Current Suggested Citation
 

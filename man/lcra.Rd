@@ -34,14 +34,18 @@ be used in the model. Currently the options are c("gaussian") with identity
 link and c("binomial") which uses a logit link.}
 
 \item{data}{data.frame with the column names specified in the regression formula
-and the manifest argument.}
+and the manifest argument. The columns used in the regression formula can be of
+any type and will be dealt with using normal R behaviour. The manifest variable
+columns, however, must be coded as numeric using positive integers. For example,
+if one of the manifest outcomes takes on values 'Dislike', 'Neutral',
+and 'like', then code them as 1, 2, and 3.}
 
 \item{nclasses}{numeric, number of latent classes}
 
 \item{manifest}{character vector containing the names of each manifest variable,
 e.g., manifest = c("Z1", "med_3", "X5"). The values of the manifest columns must
 be numerically coded with levels 1 through n_levels, where n_levels is the number
-of levels for the ith manifest variable. The function will through an error message
+of levels for the ith manifest variable. The function will throw an error message
 if they are not coded properly.}
 
 \item{inits}{list of initial values for R2WinBUGS. Defaults will be set if nothing
@@ -108,6 +112,10 @@ Details on running lcra on different operating systems:
 Wine is a standalone program needed to emulate a Windows system on non-Windows
 machines.
 }
+
+The manifest variable columns in \strong{data} must be coded as numeric with positive
+numbers. For example, if one of the manifest outcomes takes on values 'Dislike', 'Neutral',
+and 'like', then code them as 1, 2, and 3.
 }
 \examples{
 \dontrun{
