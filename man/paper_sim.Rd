@@ -11,23 +11,23 @@ paper_sim
 \description{
 Simulated data set with continuous regression outcome. The data set contains
 100 observations of 13 variables, which include 10 manifest variables,
-and two regressors - one continuoud and one dummy.
+and two regressors - one continuous and one dummy.
 }
 \details{
 \itemize{
-\item{Y}{Continuous regression outcome of interest}
-\item{Z1}{Categorical manifest variable 1}
-\item{Z2}{Categorical manifest variable 2}
-\item{Z3}{Categorical manifest variable 3}
-\item{Z4}{Categorical manifest variable 4}
-\item{Z5}{Categorical manifest variable 5}
-\item{Z6}{Categorical manifest variable 6}
-\item{Z7}{Categorical manifest variable 7}
-\item{Z8}{Categorical manifest variable 8}
-\item{Z9}{Categorical manifest variable 9}
-\item{Z10}{Categorical manifest variable 10}
-\item{X1}{Continuous predictor variable}
-\item{X2}{Categorical variable with values 1, 0}
+\item{Y }{Continuous regression outcome of interest}
+\item{Z1 }{Categorical manifest variable 1}
+\item{Z2 }{Categorical manifest variable 2}
+\item{Z3 }{Categorical manifest variable 3}
+\item{Z4 }{Categorical manifest variable 4}
+\item{Z5 }{Categorical manifest variable 5}
+\item{Z6 }{Categorical manifest variable 6}
+\item{Z7 }{Categorical manifest variable 7}
+\item{Z8 }{Categorical manifest variable 8}
+\item{Z9 }{Categorical manifest variable 9}
+\item{Z10 }{Categorical manifest variable 10}
+\item{X1 }{Continuous predictor variable}
+\item{X2 }{Categorical variable with values 1, 0}
 }
 }
 \keyword{datasets}

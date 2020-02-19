@@ -15,23 +15,23 @@ and four regressors.
 }
 \details{
 \itemize{
-\item{y}{Discrete regression outcome of interest}
-\item{Z1}{Categorical manifest variable 1}
-\item{Z2}{Categorical manifest variable 2}
-\item{Z3}{Categorical manifest variable 3}
-\item{Z4}{Categorical manifest variable 4}
-\item{Z5}{Categorical manifest variable 5}
-\item{Z6}{Categorical manifest variable 6}
-\item{Z7}{Categorical manifest variable 7}
-\item{Z8}{Categorical manifest variable 8}
-\item{Z9}{Categorical manifest variable 9}
-\item{Z10}{Categorical manifest variable 10}
-\item{Z11}{Categorical manifest variable 11}
-\item{Z12}{Categorical manifest variable 12}
-\item{x1}{Continuous predictor variable}
-\item{x2}{Continuous predictor variable}
-\item{x3}{Continuous predictor variable}
-\item{x4}{Continuous predictor variable}
+\item{y }{Discrete regression outcome of interest}
+\item{Z1 }{Categorical manifest variable 1}
+\item{Z2 }{Categorical manifest variable 2}
+\item{Z3 }{Categorical manifest variable 3}
+\item{Z4 }{Categorical manifest variable 4}
+\item{Z5 }{Categorical manifest variable 5}
+\item{Z6 }{Categorical manifest variable 6}
+\item{Z7 }{Categorical manifest variable 7}
+\item{Z8 }{Categorical manifest variable 8}
+\item{Z9 }{Categorical manifest variable 9}
+\item{Z10 }{Categorical manifest variable 10}
+\item{Z11 }{Categorical manifest variable 11}
+\item{Z12 }{Categorical manifest variable 12}
+\item{x1 }{Continuous predictor variable}
+\item{x2 }{Continuous predictor variable}
+\item{x3 }{Continuous predictor variable}
+\item{x4 }{Continuous predictor variable}
 }
 }
 \keyword{datasets}
