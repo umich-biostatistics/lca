@@ -69,7 +69,8 @@ attempt to find the WINE installation on your machine.}
 
 \item{debug}{logical, keep WinBUGS open debug, inspect chains and summary.}
 
-\item{...}{}
+\item{...}{other arguments to bugs(). Run ?bugs to see list of possible
+arguments to pass into bugs.}
 }
 \value{
 A list containing the following items:

@@ -16,7 +16,10 @@
 #' and the manifest argument.
 #' @param nclasses numeric, number of latent classes
 #' @param manifest character vector containing the names of each manifest variable,
-#' e.g., manifest = c("Z1", "med_3", "X5")
+#' e.g., manifest = c("Z1", "med_3", "X5"). The values of the manifest columns must
+#' be numerically coded with levels 1 through n_levels, where n_levels is the number
+#' of levels for the ith manifest variable. The function will through an error message
+#' if they are not coded properly.
 #' @param inits list of initial values for R2WinBUGS. Defaults will be set if nothing
 #' is specified. Inits must be a list with n.chains elements; each element of the list
 #' is itself a list of starting values for the WinBUGS model. 
@@ -35,7 +38,8 @@
 #' @param WINE character, path to WINE binary file. If not provided, the program will
 #' attempt to find the WINE installation on your machine.
 #' @param debug logical, keep WinBUGS open debug, inspect chains and summary.
-#' @param ...
+#' @param ... other arguments to bugs(). Run ?bugs to see list of possible
+#' arguments to pass into bugs.
 #' 
 #' @details 
 #' Details on running lcra on different operating systems:
@@ -344,19 +348,30 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   
   Z = data[,manifest]
   
+  lapply(Z, function(x) {
+    if(!is.numeric(x)) {
+      stop('All manifest variables must be numeric. At least one of the manifest
+           variables you specified is not numeric.')
+    }
+    if(any(x < 0)) {
+      stop('At least one of the manifest variables you specified contains negative values. 
+           Code levels of manifest variables to take on values 1 through number of levels.')
+    }
+  })
+  
   manifest.levels = apply(Z, 2, function(x) {length(unique(x))})
   
-  Z_new =
-    lapply(names(manifest.levels), function(x) {
-      new_labels = 1:manifest.levels[x]
-      column = Z[, x]
-      new_column = as.numeric(factor(column, levels = unique(column), labels = new_labels))
-      new_column
-    })
-  
-  Z_new = as.data.frame(do.call(cbind, Z_new))
-  names(Z_new) = names(manifest.levels)
-  Z = Z_new
+  # Z_new =
+  #   lapply(names(manifest.levels), function(x) {
+  #     new_labels = 1:manifest.levels[x]
+  #     column = Z[, x]
+  #     new_column = as.numeric(as.character(factor(column, levels = unique(column), labels = new_labels)))
+  #     new_column
+  #   })
+  # 
+  # Z_new = as.data.frame(do.call(cbind, Z_new))
+  # names(Z_new) = names(manifest.levels)
+  # Z = Z_new
   
   unique.manifest.levels = unique(manifest.levels)
   
@@ -483,17 +498,6 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   
 }
 
-#' Contruct Bugs Model
-#'
-#' Construct bugs latent class model in the form of a function for use in the code
-#' function bayes_lca
-#'
-#' @param x model matrix
-#' @param regression Expression which contains code for the response distribution,
-#' e.g. expr(stuff)
-#'
-#' @return R function which contains Bugs model
-
 constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
                              regression, 
                              response) {
@@ -549,23 +553,6 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
   text_fun = as.character(quo_get_expr(constructor()))[2]
   return(eval(parse(text = text_fun)))
   
-}
-
-#' Get the Bugs model
-#'
-#' Sometimes the user may want more flexibility in the model fit than 
-#' our program provides. In this case, the user can fit a close model and 
-#' use this function to retrieve the model as an R function. 
-#'
-#' @param fit an lcra fit object
-#'
-#' @return R function which contains Bugs model
-
-get_bugs_model = function(fit) {
-  if(class(fit) != "lcra") {
-    stop("Must be a lcra object to extract the Bugs model.")
-  }
-  return(fit$model)
 }
 
 #' Printing an lcra object
