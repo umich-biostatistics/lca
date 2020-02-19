@@ -439,19 +439,22 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   
   regression = c()
   response = c()
+  tau = c()
   
   if(family == "gaussian") {
     response = expr(y[i] ~ dnorm(yhat[i], tau))
     regression = expr(yhat[i] <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
+    tau = expr(tau~dgamma(0.1,0.1))
   } else if(family == "binomial") {
     response = expr(y[i] ~ dbern(p[i]))
     regression = expr(logit(p[i]) <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
+    tau = NULL
   }
   
   # call R bugs model constructor
   model = constr_bugs_model(N = N, n_manifest = n_manifest, n_beta = n_beta,
                             nclasses = nclasses, npriors = unique.manifest.levels, 
-                            regression = regression, response = response)
+                            regression = regression, response = response, tau = tau)
   # write model
   filename <- file.path(dir, "model.bug")
   write.model(model, filename)
@@ -500,8 +503,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
 }
 
 constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
-                             regression, 
-                             response) {
+                             regression, response, tau) {
   
   constructor = function() {
     
@@ -543,7 +545,7 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
             alpha[k]~dnorm(0,0.1)
           }
           
-          tau~dgamma(0.1,0.1)
+          !!tau
           
         }
       })
