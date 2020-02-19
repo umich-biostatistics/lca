@@ -66,20 +66,20 @@
 #'   list(
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 3),
-#'       alpha = rep(0, length = 2),
+#'       beta = rep(0, length = 2),
+#'       alpha = rep(0, length = 3),
 #'       tau = 0.5
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 3),
-#'       alpha = rep(0, length = 2),
+#'       beta = rep(0, length = 2),
+#'       alpha = rep(0, length = 3),
 #'       tau = 0.5
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 3),
-#'       alpha = rep(0, length = 2),
+#'       beta = rep(0, length = 2),
+#'       alpha = rep(0, length = 3),
 #'       tau = 0.5
 #'     )
 #'   )
@@ -88,18 +88,18 @@
 #'   list(
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 3),
-#'       alpha = rep(0, length = 2)
+#'       beta = rep(0, length = 2),
+#'       alpha = rep(0, length = 3)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 3),
-#'       alpha = rep(0, length = 2)
+#'       beta = rep(0, length = 2),
+#'       alpha = rep(0, length = 3)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 3),
-#'       alpha = rep(0, length = 2)
+#'       beta = rep(0, length = 2),
+#'       alpha = rep(0, length = 3)
 #'     )
 #'   )
 #' 
@@ -161,20 +161,20 @@
 #'   list(
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 5),
-#'       alpha = rep(0, length = 2),
+#'       beta = rep(0, length = 4),
+#'       alpha = rep(0, length = 3),
 #'       tau = 0.5
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 5),
-#'       alpha = rep(0, length = 2),
+#'       beta = rep(0, length = 4),
+#'       alpha = rep(0, length = 3),
 #'       tau = 0.5
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 5),
-#'       alpha = rep(0, length = 2),
+#'       beta = rep(0, length = 4),
+#'       alpha = rep(0, length = 3),
 #'       tau = 0.5
 #'     )
 #'   )
@@ -183,18 +183,18 @@
 #'   list(
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 5),
-#'       alpha = rep(0, length = 2)
+#'       beta = rep(0, length = 4),
+#'       alpha = rep(0, length = 3)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 5),
-#'       alpha = rep(0, length = 2)
+#'       beta = rep(0, length = 4),
+#'       alpha = rep(0, length = 3)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 5),
-#'       alpha = rep(0, length = 2)
+#'       beta = rep(0, length = 4),
+#'       alpha = rep(0, length = 3)
 #'     )
 #'   )
 #' 

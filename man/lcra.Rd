@@ -39,7 +39,10 @@ and the manifest argument.}
 \item{nclasses}{numeric, number of latent classes}
 
 \item{manifest}{character vector containing the names of each manifest variable,
-e.g., manifest = c("Z1", "med_3", "X5")}
+e.g., manifest = c("Z1", "med_3", "X5"). The values of the manifest columns must
+be numerically coded with levels 1 through n_levels, where n_levels is the number
+of levels for the ith manifest variable. The function will through an error message
+if they are not coded properly.}
 
 \item{inits}{list of initial values for R2WinBUGS. Defaults will be set if nothing
 is specified. Inits must be a list with n.chains elements; each element of the list
@@ -117,20 +120,20 @@ inits =
   list(
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3),
       tau = 0.5
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3),
       tau = 0.5
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3),
       tau = 0.5
     )
   )
@@ -139,18 +142,18 @@ inits_binary =
   list(
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2)
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3)
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2)
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3)
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2)
+      beta = rep(0, length = 2),
+      alpha = rep(0, length = 3)
     )
   )
 
@@ -212,20 +215,20 @@ inits =
   list(
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2),
+      beta = rep(0, length = 4),
+      alpha = rep(0, length = 3),
       tau = 0.5
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2),
+      beta = rep(0, length = 4),
+      alpha = rep(0, length = 3),
       tau = 0.5
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2),
+      beta = rep(0, length = 4),
+      alpha = rep(0, length = 3),
       tau = 0.5
     )
   )
@@ -234,18 +237,18 @@ inits_binary =
   list(
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2)
+      beta = rep(0, length = 4),
+      alpha = rep(0, length = 3)
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2)
+      beta = rep(0, length = 4),
+      alpha = rep(0, length = 3)
     ),
     list(
       theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2)
+      beta = rep(0, length = 4),
+      alpha = rep(0, length = 3)
     )
   )
 
