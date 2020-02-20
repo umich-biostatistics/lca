@@ -49,7 +49,33 @@ install_github('umich-biostatistics/lcra')
 library(lcra)
 ```
 
+
 ## Example usage
+
+### Quick example: 
+
+```{r, eval = FALSE}
+inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 2), 
+                  alpha = rep(0, length = 3), tau = 0.5))
+            
+fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
+           nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
+           n.chains = 1, n.iter = 500, parameters.to.save = c("beta", "true", "alpha"))
+  
+fit$mean$alpha
+#  0.8544998  0.4502046 -0.2890094
+
+fit$mean$beta
+# -2.9268346  0.1501557
+
+fit$median$true
+```
+
+NOTE: WinBUGS throws an error on Windows machines if you are not running as administrator. The error reads: Error in file(con, "wb") : cannot open the connection.
+
+Ignore the error. Once WinBUGS is finished drawing samples, follow the promp and return to R.
+
+### More examples:
 
 The main function for the joint model is `lcra()`. Use `?lcra` for the R help file.
 
