@@ -65,6 +65,24 @@
 #' 
 #' @examples 
 #' \dontrun{
+#' 
+#' # Express example
+#' inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 2), 
+#'                   alpha = rep(0, length = 3), tau = 0.5))
+#'             
+#' fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
+#'            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
+#'            n.chains = 1, n.iter = 500, parameters.to.save = c("beta", "true", "alpha"))
+#'   
+#' fit$mean$alpha
+#'   0.8544998  0.4502046 -0.2890094
+#' 
+#' fit$mean$beta
+#'  -2.9268346  0.1501557
+#' 
+#' fit$median$true
+#' 
+#' 
 #' # Data sets 1 and 2
 #' data('paper_sim')
 #' data('paper_sim_binary')
