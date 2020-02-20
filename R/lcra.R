@@ -468,7 +468,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   write.model(model, filename)
   
   # Fit Bayesian latent class model
-  samp_lcra = bugs(data = dat_list, 
+  suppressWarnings({
+    samp_lcra = bugs(data = dat_list, 
                    inits = inits,
                    model.file = filename, 
                    n.chains = n.chains, 
@@ -479,6 +480,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
                    n.thin = n.thin, 
                    useWINE = useWINE, 
                    WINE = WINE, ...)
+  })
+  
   
   # Results
   # return bugs fit
