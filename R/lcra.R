@@ -331,17 +331,11 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   if(is.null(formula)) {do_regression = FALSE}
   else {do_regression = TRUE}
   
-  # Convert all manifest variables to numeric 1,... nlevels?
-  
-  # construct a model frame (mf)
-  
   mf = match.call(expand.dots = FALSE)
   m = match(c("formula", "data"), names(mf))
   mf = mf[c(1L, m)]
   mf[[1L]] = quote(stats::model.frame)
   mf = eval(mf, parent.frame())
-  
-  # construct a model matrix
   
   mt = attr(mf, "terms")
   x = model.matrix(mt, mf)
@@ -370,18 +364,6 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   
   manifest.levels = apply(Z, 2, function(x) {length(unique(x))})
   
-  # Z_new =
-  #   lapply(names(manifest.levels), function(x) {
-  #     new_labels = 1:manifest.levels[x]
-  #     column = Z[, x]
-  #     new_column = as.numeric(as.character(factor(column, levels = unique(column), labels = new_labels)))
-  #     new_column
-  #   })
-  # 
-  # Z_new = as.data.frame(do.call(cbind, Z_new))
-  # names(Z_new) = names(manifest.levels)
-  # Z = Z_new
-  
   unique.manifest.levels = unique(manifest.levels)
   
   p.length = length(unique.manifest.levels)
@@ -393,11 +375,10 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   }
   
   dat_list = vector(mode = "list", length = 6)
-  #name = vector(mode = "numeric", length = length(unique.manifest.levels))
-  prior_mat = matrix(NA, nrow = ncol(Z), 
-                     ncol = max(unique.manifest.levels))
+  
+  prior_mat = matrix(NA, nrow = ncol(Z), ncol = max(unique.manifest.levels))
+  
   for(j in 1:length(manifest.levels)) {
-    #name[j] = paste("prior", unique.manifest.levels[j], sep = "")
     prior = round(rep(1/manifest.levels[j], manifest.levels[j]), digits = 3)
     if(sum(prior) != 1){
       prior[length(prior)] = prior[length(prior)] + 
@@ -426,11 +407,6 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
     .Dim=c(N,n_manifest)
   )
   
-  # dat_list[["C"]] = structure(
-  #   .Data=rep(0, (nclasses-1) * N),
-  #   .Dim=c(N,nclasses-1)
-  # )
-  
   dat_list[["y"]] = y
   
   dat_list[["x"]] = structure(
@@ -442,7 +418,6 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   names(nlevels) = NULL
   dat_list[["nlevels"]] = nlevels
   
-  # construct R2WinBUGS input
   n_beta = ncol(x)
   
   regression = c()
@@ -463,11 +438,12 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   model = constr_bugs_model(N = N, n_manifest = n_manifest, n_beta = n_beta,
                             nclasses = nclasses, npriors = unique.manifest.levels, 
                             regression = regression, response = response, tau = tau)
+  
   # write model
   filename <- file.path(dir, "model.bug")
   write.model(model, filename)
   
-  # Fit Bayesian latent class model
+  # Fit Bayesian latent class model using BUGS
   suppressWarnings({
     samp_lcra = bugs(data = dat_list, 
                    inits = inits,
@@ -484,7 +460,6 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   
   
   # Results
-  # return bugs fit
   sims.array = samp_lcra$sims.array
   sims.list = samp_lcra$sims.list
   sims.matrix = samp_lcra$sims.matrix
@@ -512,6 +487,7 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   return(result)
   
 }
+
 
 constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
                              regression, response, tau) {
@@ -541,12 +517,11 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
           
           theta[1:!!nclasses]~ddirch(prior[])
           
-          # need to generalize to all prior""[], make a series of arrays
           for(c in 1:!!nclasses) {
             for(j in 1:!!n_manifest) {
               Zprior[c,j,1:nlevels[j]]~ddirch(prior_mat[j,1:nlevels[j]])
             }
-          } # need one of these double loops for each prior length
+          }
           
           for(k in 1:!!n_beta) {
             beta[k]~dnorm(0,0.1)
@@ -569,6 +544,7 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
   
 }
 
+
 #' Printing an lcra object
 #' 
 #' Print the lcra model output using print.bugs.
@@ -577,11 +553,12 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
 #' @param ... further arguments to print
 
 print.lcra = function(x, ...) {
-  if(class(x) != "lcra") {
+  if (class(x) != "lcra") {
     stop("Must be a lcra object to extract the Bugs model.")
   }
   return(R2WinBUGS:::print.bugs(x$bugs.object, ...))
 }
+
 
 #' Plotting an lcra object
 #' 
@@ -591,7 +568,7 @@ print.lcra = function(x, ...) {
 #' @param ... further arguments to plot
 
 plot.lcra = function(x, ...) {
-  if(class(x) != "lcra") {
+  if (class(x) != "lcra") {
     stop("Must be a lcra object to extract the Bugs model.")
   }
   return(R2WinBUGS:::plot.bugs(x$bugs.object, ...))
