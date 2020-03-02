@@ -67,18 +67,19 @@
 #' \dontrun{
 #' 
 #' # Express example
-#' inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 2), 
-#'                   alpha = rep(0, length = 3), tau = 0.5))
-#'             
+#' 
+#' inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3), 
+#'                   alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = nrow(express))))
+#'          
 #' fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
 #'            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
 #'            n.chains = 1, n.iter = 500, parameters.to.save = c("beta", "true", "alpha"))
 #'   
 #' fit$mean$alpha
-#'   0.8544998  0.4502046 -0.2890094
+#' # 1.149500 0.744088
 #' 
 #' fit$mean$beta
-#'  -2.9268346  0.1501557
+#' # -0.2898060 -2.9269320  0.1537627
 #' 
 #' fit$median$true
 #' 
@@ -92,21 +93,24 @@
 #'   list(
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 2),
-#'       alpha = rep(0, length = 3),
-#'       tau = 0.5
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2),
+#'       tau = 0.5,
+#'       true = rep(1, length = 100)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 2),
-#'       alpha = rep(0, length = 3),
-#'       tau = 0.5
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2),
+#'       tau = 0.5,
+#'       true = rep(1, length = 100)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 2),
-#'       alpha = rep(0, length = 3),
-#'       tau = 0.5
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2),
+#'       tau = 0.5,
+#'       true = rep(1, length = 100)
 #'     )
 #'   )
 #' 
@@ -114,18 +118,21 @@
 #'   list(
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 2),
-#'       alpha = rep(0, length = 3)
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2),
+#'       true = rep(1, length = 100)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 2),
-#'       alpha = rep(0, length = 3)
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2),
+#'       true = rep(1, length = 100)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 2),
-#'       alpha = rep(0, length = 3)
+#'       beta = rep(0, length = 3),
+#'       alpha = rep(0, length = 2),
+#'       true = rep(1, length = 100)
 #'     )
 #'   )
 #' 
@@ -187,20 +194,23 @@
 #'   list(
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 4),
-#'       alpha = rep(0, length = 3),
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2),
+#'       true = rep(1, length = 350),
 #'       tau = 0.5
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 4),
-#'       alpha = rep(0, length = 3),
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2),
+#'       true = rep(1, length = 350),
 #'       tau = 0.5
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 4),
-#'       alpha = rep(0, length = 3),
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2),
+#'       true = rep(1, length = 350),
 #'       tau = 0.5
 #'     )
 #'   )
@@ -209,18 +219,21 @@
 #'   list(
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 4),
-#'       alpha = rep(0, length = 3)
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2),
+#'       true = rep(1, length = 350)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 4),
-#'       alpha = rep(0, length = 3)
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2),
+#'       true = rep(1, length = 350)
 #'     ),
 #'     list(
 #'       theta = c(0.33, 0.33, 0.34),
-#'       beta = rep(0, length = 4),
-#'       alpha = rep(0, length = 3)
+#'       beta = rep(0, length = 5),
+#'       alpha = rep(0, length = 2),
+#'       true = rep(1, length = 350)
 #'     )
 #'   )
 #' 
