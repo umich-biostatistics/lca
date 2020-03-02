@@ -357,9 +357,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   
   mt = attr(mf, "terms")
   x = model.matrix(mt, mf)
-  x = x[,!colnames(x) %in% c('(Intercept)'), drop = FALSE]
   
-  y = mf$y
+  y = mf[[setdiff(names(mf), colnames(x))]]
   
   # select manifest variables from model matrix
   if(any(!(manifest %in% colnames(data)))) {
@@ -524,7 +523,7 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
               Z[i,j]~dcat(Zprior[true[i],j,1:nlevels[j]])
             }
             
-            for(k in 1:(!!nclasses)) {
+            for(k in 1:(!!(nclasses-1))) {
               C[i,k] <- step(-true[i]+k) - step(-true[i]+k-1)
             }
             
@@ -545,7 +544,7 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
             beta[k]~dnorm(0,0.1)
           }
           
-          for(k in 1:!!nclasses) {
+          for(k in 1:!!(nclasses-1)) {
             alpha[k]~dnorm(0,0.1)
           }
           
