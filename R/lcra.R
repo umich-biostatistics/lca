@@ -586,7 +586,7 @@ print.lcra = function(x, ...) {
   if (class(x) != "lcra") {
     stop("Must be a lcra object to extract the Bugs model.")
   }
-  return(R2WinBUGS:::print.bugs(x$bugs.object, ...))
+  return(print.bugs(x$bugs.object, ...))
 }
 
 
@@ -601,5 +601,5 @@ plot.lcra = function(x, ...) {
   if (class(x) != "lcra") {
     stop("Must be a lcra object to extract the Bugs model.")
   }
-  return(R2WinBUGS:::plot.bugs(x$bugs.object, ...))
+  return(plot.bugs(x$bugs.object, ...))
 }
