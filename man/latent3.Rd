@@ -4,7 +4,9 @@
 \name{latent3}
 \alias{latent3}
 \title{Simulated data set number 2 (continuous regression outcome)}
-\format{An object of class \code{data.frame} with 350 rows and 17 columns.}
+\format{
+An object of class \code{data.frame} with 350 rows and 17 columns.
+}
 \usage{
 latent3
 }

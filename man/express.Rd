@@ -4,7 +4,9 @@
 \name{express}
 \alias{express}
 \title{Small simulated data set}
-\format{An object of class \code{data.frame} with 150 rows and 8 columns.}
+\format{
+An object of class \code{data.frame} with 150 rows and 8 columns.
+}
 \usage{
 express
 }

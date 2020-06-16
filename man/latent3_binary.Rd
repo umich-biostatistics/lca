@@ -4,7 +4,9 @@
 \name{latent3_binary}
 \alias{latent3_binary}
 \title{Simulated data set number 2 (discrete regression outcome)}
-\format{An object of class \code{data.frame} with 350 rows and 17 columns.}
+\format{
+An object of class \code{data.frame} with 350 rows and 17 columns.
+}
 \usage{
 latent3_binary
 }

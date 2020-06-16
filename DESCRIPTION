@@ -1,5 +1,5 @@
 Package: lcra
-Version: 1.0.0.9000
+Version: 1.1.0.9
 Title: Bayesian Joint Latent Class and Regression Models
 Type: Package
 Description: R package for Bayesian joint latent class and regression models. 
@@ -27,5 +27,5 @@ Imports:
 SystemRequirements: GNU make
 URL: https://github.com/umich-biostatistics/lcra
 BugReports: https://github.com/umich-biostatistics/lcra/issues
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)

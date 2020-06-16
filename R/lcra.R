@@ -31,8 +31,6 @@
 #' to store the WinBUGS output files and BUGS model file.
 #' @param n.chains number of Markov chains.
 #' @param n.iter number of total iterations per chain including burn-in.
-#' @param parameters.to.save character vector of names of all parameters to be saved.
-#' If unspecified, all will be saved.
 #' @param n.burnin length of burn-in, i.e., number of iterations to discard
 #' at the beginning. Default is n.iter/2.
 #' @param n.thin thinning rate. Must be a positive integer. Set n.thin > 1 to save
@@ -73,13 +71,11 @@
 #'          
 #' fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
 #'            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
-#'            n.chains = 1, n.iter = 500, parameters.to.save = c("beta", "true", "alpha"))
+#'            n.chains = 1, n.iter = 500)
 #'   
 #' fit$mean$alpha
-#' # 1.149500 0.744088
 #' 
 #' fit$mean$beta
-#' # -0.2898060 -2.9269320  0.1537627
 #' 
 #' fit$median$true
 #' 
@@ -147,8 +143,7 @@
 #'     inits = inits,
 #'     dir = tempdir(),
 #'     n.chains = 3,
-#'     n.iter = 5000,
-#'     parameters.to.save = c("theta", "beta", "true", "alpha")
+#'     n.iter = 5000
 #'   )
 #' 
 #' # Model 1 results
@@ -171,8 +166,7 @@
 #'     inits = inits_binary,
 #'     dir = tempdir(),
 #'     n.chains = 3,
-#'     n.iter = 5000,
-#'     parameters.to.save = c("theta", "beta", "true", "alpha")
+#'     n.iter = 5000
 #'   )
 #' 
 #' # Model 2 results
@@ -248,8 +242,7 @@
 #'     inits = inits,
 #'     dir = tempdir(),
 #'     n.chains = 3,
-#'     n.iter = 5000,
-#'     parameters.to.save = c("theta", "beta", "true", "alpha")
+#'     n.iter = 5000
 #'   )
 #' 
 #' # Model 3 results
@@ -272,8 +265,7 @@
 #'     inits = inits_binary,
 #'     dir = tempdir(),
 #'     n.chains = 3,
-#'     n.iter = 5000,
-#'     parameters.to.save = c("theta", "beta", "true", "alpha")
+#'     n.iter = 5000
 #'   )
 #' 
 #' # Model 4 results
@@ -306,7 +298,7 @@
 #' 
 
 lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir, 
-                n.chains = 3, n.iter = 2000, parameters.to.save, n.burnin = n.iter/2, 
+                n.chains = 3, n.iter = 2000, n.burnin = n.iter/2, 
                 n.thin = 1, useWINE = FALSE, WINE, debug = FALSE, ...) {
   
   # checks on input
@@ -448,6 +440,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   names(nlevels) = NULL
   dat_list[["nlevels"]] = nlevels
   
+  parameters.to.save = c("beta", "true", "alpha", "pi")
+  
   n_beta = ncol(x)
   
   regression = c()
@@ -488,7 +482,6 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
                    WINE = WINE, ...)
   })
   
-  
   # Results
   sims.array = samp_lcra$sims.array
   sims.list = samp_lcra$sims.list
@@ -510,7 +503,9 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
          model.frame = mf,
          model.matrix = x,
          bugs.object = samp_lcra,
-         model = model)
+         model = model,
+         data = data, 
+         manifest = manifest)
   
   attr(result, "class") = "lcra"
   
@@ -534,6 +529,7 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
             
             for(j in 1:!!n_manifest){
               Z[i,j]~dcat(Zprior[true[i],j,1:nlevels[j]])
+              pi[i,j] <- Zprior[true[i],j,1:nlevels[j]]
             }
             
             for(k in 1:(!!(nclasses-1))) {
@@ -572,6 +568,72 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
   text_fun = as.character(quo_get_expr(constructor()))[2]
   return(eval(parse(text = text_fun)))
   
+}
+
+
+#' Compute conditional probability of the manifest outcome
+#'
+#' This function takes an lcra fit object and computes the probability
+#' of the outcome given the implied latent class membership.
+#' 
+#' @param lcra.fit the lcra fit object. See ?lcra for instructions.
+#' 
+#' @return a list which contains mean.pi - the posterior mean probability of the manifest outcome,
+#' and pi_draws - the array containing draws for the probability
+#' of the outcome given the implied latent class membership.
+#' 
+#' @example 
+#' inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3), 
+#' alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = nrow(express))))
+#' 
+#' fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
+#'            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
+#'            n.chains = 1, n.iter = 500)
+#' 
+#' pi(fit)$pi_draws
+#' 
+#' pi(fit)
+
+pi = function(lcra.fit) {
+  if(class(lcra.fit) != "lcra") stop("Object is not of class lcra")
+  
+  pi = lcra.fit$sims.list$pi
+  n = dim(pi)[1]
+  nr = dim(pi)[2]
+  nc = dim(pi)[3]
+  Z = lcra.fit$manifest
+  
+  matsum = matrix(data = 0, nrow = nr, ncol = nc)
+  for (i in 1:n) {
+    matsum = matsum + pi[i,,]
+  }
+  matsum = matsum / n
+  
+  colnames(matsum) <- Z
+  
+  results = 
+    list(
+      mean.pi = matsum,
+      pi_draws = pi
+    )
+  attr(results, "class") <- 'lcra_pi'
+  
+  return(results)
+}
+
+
+#' Printing an lcra_pi object
+#' 
+#' Print the lcra pi output.
+#' 
+#' @param x an object of class 'lcra_pi', see lcra() for details
+#' @param ... further arguments to print
+
+print.lcra_pi = function(x, ...) {
+  if (class(x) != "lcra_pi") {
+    stop("Must be a lcra object to extract the Bugs model.")
+  }
+  print(x$mean.pi)
 }
 
 

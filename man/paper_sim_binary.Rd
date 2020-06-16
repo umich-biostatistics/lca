@@ -4,7 +4,9 @@
 \name{paper_sim_binary}
 \alias{paper_sim_binary}
 \title{Simulated data set (discrete regression outcome)}
-\format{An object of class \code{data.frame} with 100 rows and 13 columns.}
+\format{
+An object of class \code{data.frame} with 100 rows and 13 columns.
+}
 \usage{
 paper_sim_binary
 }

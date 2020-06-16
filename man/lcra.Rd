@@ -14,7 +14,6 @@ lcra(
   dir,
   n.chains = 3,
   n.iter = 2000,
-  parameters.to.save,
   n.burnin = n.iter/2,
   n.thin = 1,
   useWINE = FALSE,
@@ -58,9 +57,6 @@ to store the WinBUGS output files and BUGS model file.}
 \item{n.chains}{number of Markov chains.}
 
 \item{n.iter}{number of total iterations per chain including burn-in.}
-
-\item{parameters.to.save}{character vector of names of all parameters to be saved.
-If unspecified, all will be saved.}
 
 \item{n.burnin}{length of burn-in, i.e., number of iterations to discard
 at the beginning. Default is n.iter/2.}
@@ -127,13 +123,11 @@ inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
          
 fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
-           n.chains = 1, n.iter = 500, parameters.to.save = c("beta", "true", "alpha"))
+           n.chains = 1, n.iter = 500)
   
 fit$mean$alpha
-# 1.149500 0.744088
 
 fit$mean$beta
-# -0.2898060 -2.9269320  0.1537627
 
 fit$median$true
 
@@ -201,8 +195,7 @@ fit.gaus_paper =
     inits = inits,
     dir = tempdir(),
     n.chains = 3,
-    n.iter = 5000,
-    parameters.to.save = c("theta", "beta", "true", "alpha")
+    n.iter = 5000
   )
 
 # Model 1 results
@@ -225,8 +218,7 @@ fit.binom_paper =
     inits = inits_binary,
     dir = tempdir(),
     n.chains = 3,
-    n.iter = 5000,
-    parameters.to.save = c("theta", "beta", "true", "alpha")
+    n.iter = 5000
   )
 
 # Model 2 results
@@ -302,8 +294,7 @@ fit.gaus_latent3 =
     inits = inits,
     dir = tempdir(),
     n.chains = 3,
-    n.iter = 5000,
-    parameters.to.save = c("theta", "beta", "true", "alpha")
+    n.iter = 5000
   )
 
 # Model 3 results
@@ -326,8 +317,7 @@ fit.binom_latent3 =
     inits = inits_binary,
     dir = tempdir(),
     n.chains = 3,
-    n.iter = 5000,
-    parameters.to.save = c("theta", "beta", "true", "alpha")
+    n.iter = 5000
   )
 
 # Model 4 results

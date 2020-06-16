@@ -4,7 +4,9 @@
 \name{paper_sim}
 \alias{paper_sim}
 \title{Simulated data set (continuous regression outcome)}
-\format{An object of class \code{data.frame} with 100 rows and 13 columns.}
+\format{
+An object of class \code{data.frame} with 100 rows and 13 columns.
+}
 \usage{
 paper_sim
 }
