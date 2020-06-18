@@ -1,6 +1,5 @@
 
 export(lcra)
-export(pi)
 importFrom(rlang, expr)
 importFrom(rlang, quo_get_expr)
 importFrom(rlang, quo)
@@ -8,5 +7,4 @@ importFrom(R2WinBUGS, bugs)
 importFrom(R2WinBUGS, write.model)
 S3method(plot, lcra)
 S3method(print, lcra)
-S3method(print, lcra_pi)
 importFrom(stats, model.matrix)

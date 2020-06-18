@@ -528,11 +528,10 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
             true[i]~dcat(theta[])
             
             for(j in 1:!!n_manifest){
-              Z[i,j]~dcat(Zprior[true[i],j,1:nlevels[j]])
-              pi[i,j] <- Zprior[true[i],j,1:nlevels[j]]
+              Z[i,j]~dcat(pi[true[i],j,1:nlevels[j]])
             }
             
-            for(k in 1:(!!(nclasses-1))) {
+            for(k in 1:(!!(nclasses-1))){
               C[i,k] <- step(-true[i]+k) - step(-true[i]+k-1)
             }
             
@@ -543,17 +542,17 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
           
           theta[1:!!nclasses]~ddirch(prior[])
           
-          for(c in 1:!!nclasses) {
-            for(j in 1:!!n_manifest) {
-              Zprior[c,j,1:nlevels[j]]~ddirch(prior_mat[j,1:nlevels[j]])
+          for(c in 1:!!nclasses){
+            for(j in 1:!!n_manifest){
+              pi[c,j,1:nlevels[j]]~ddirch(prior_mat[j,1:nlevels[j]])
             }
           }
           
-          for(k in 1:!!n_beta) {
+          for(k in 1:!!n_beta){
             beta[k]~dnorm(0,0.1)
           }
           
-          for(k in 1:!!(nclasses-1)) {
+          for(k in 1:!!(nclasses-1)){
             alpha[k]~dnorm(0,0.1)
           }
           
@@ -568,72 +567,6 @@ constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
   text_fun = as.character(quo_get_expr(constructor()))[2]
   return(eval(parse(text = text_fun)))
   
-}
-
-
-#' Compute conditional probability of the manifest outcome
-#'
-#' This function takes an lcra fit object and computes the probability
-#' of the outcome given the implied latent class membership.
-#' 
-#' @param lcra.fit the lcra fit object. See ?lcra for instructions.
-#' 
-#' @return a list which contains mean.pi - the posterior mean probability of the manifest outcome,
-#' and pi_draws - the array containing draws for the probability
-#' of the outcome given the implied latent class membership.
-#' 
-#' @example 
-#' inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3), 
-#' alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = nrow(express))))
-#' 
-#' fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
-#'            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
-#'            n.chains = 1, n.iter = 500)
-#' 
-#' pi(fit)$pi_draws
-#' 
-#' pi(fit)
-
-pi = function(lcra.fit) {
-  if(class(lcra.fit) != "lcra") stop("Object is not of class lcra")
-  
-  pi = lcra.fit$sims.list$pi
-  n = dim(pi)[1]
-  nr = dim(pi)[2]
-  nc = dim(pi)[3]
-  Z = lcra.fit$manifest
-  
-  matsum = matrix(data = 0, nrow = nr, ncol = nc)
-  for (i in 1:n) {
-    matsum = matsum + pi[i,,]
-  }
-  matsum = matsum / n
-  
-  colnames(matsum) <- Z
-  
-  results = 
-    list(
-      mean.pi = matsum,
-      pi_draws = pi
-    )
-  attr(results, "class") <- 'lcra_pi'
-  
-  return(results)
-}
-
-
-#' Printing an lcra_pi object
-#' 
-#' Print the lcra pi output.
-#' 
-#' @param x an object of class 'lcra_pi', see lcra() for details
-#' @param ... further arguments to print
-
-print.lcra_pi = function(x, ...) {
-  if (class(x) != "lcra_pi") {
-    stop("Must be a lcra object to extract the Bugs model.")
-  }
-  print(x$mean.pi)
 }
 
 
