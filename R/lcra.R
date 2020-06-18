@@ -440,8 +440,6 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   names(nlevels) = NULL
   dat_list[["nlevels"]] = nlevels
   
-  parameters.to.save = c("beta", "true", "alpha", "pi")
-  
   n_beta = ncol(x)
   
   regression = c()
@@ -452,10 +450,12 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
     response = expr(y[i] ~ dnorm(yhat[i], tau))
     regression = expr(yhat[i] <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
     tau = expr(tau~dgamma(0.1,0.1))
+    parameters.to.save = c("beta", "true", "alpha", "pi", "theta", "tau")
   } else if(family == "binomial") {
     response = expr(y[i] ~ dbern(p[i]))
     regression = expr(logit(p[i]) <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
     tau = NULL
+    parameters.to.save = c("beta", "true", "alpha", "pi", "theta")
   }
   
   # call R bugs model constructor
