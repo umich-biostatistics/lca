@@ -101,16 +101,16 @@ The following priors are the default and cannot be altered by the user:
 ![](man/figures/model3.png) ![](man/figures/model4.png)
 
 Please note also that the reference category for latent classes in the
-outcome model output is always the th latent class in the output, and
+outcome model output is always the Jth latent class in the output, and
 the bugs output is defined by the Latin equivalent of the model
 parameters (beta, alpha, tau, pi, theta). Also, the bugs output includes
-the variable true, which corresponds to the MCMC draws of , as well as
-the MCMC draws of the deviance (DIC) statistic. Finally the bugs output
-for pi is stored in a three dimensional array corresponding to (class,
-variable, category), where category is indexed by 1 through ; for
-variables where the number of categories is less than , these cells will
-be set to NA. The parameters outputted by the lcra function currently
-are not user definable.
+the variable true, which corresponds to the MCMC draws of C\_i, i =
+1,…,n, as well as the MCMC draws of the deviance (DIC) statistic.
+Finally the bugs output for pi is stored in a three dimensional array
+corresponding to (class, variable, category), where category is indexed
+by 1 through maximum K\_l; for variables where the number of categories
+is less than maximum K\_l, these cells will be set to NA. The parameters
+outputed by the lcra function currently are not user definable.
 
 ### More examples:
 

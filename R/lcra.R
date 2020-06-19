@@ -69,14 +69,14 @@
 #' \figure{model4.png}
 #' 
 #' Please note also that the reference category for latent classes in the outcome 
-#' model output is always the \eqn{J}th latent class in the output, and the bugs
+#' model output is always the Jth latent class in the output, and the bugs
 #' output is defined by the Latin equivalent of the model parameters
 #' (beta, alpha, tau, pi, theta). Also, the bugs output includes the variable true,
-#' which corresponds to the MCMC draws of \eqn{C_i, i = 1,...,n}, as well as the MCMC 
+#' which corresponds to the MCMC draws of C_i, i = 1,...,n, as well as the MCMC 
 #' draws of the deviance (DIC) statistic. Finally the bugs output for pi
 #' is stored in a three dimensional array corresponding to (class, variable, category),
-#' where category is indexed by 1 through \eqn{\underset{l}{\max K_l}}; for variables where the number of 
-#' categories is less than \eqn{\underset{l}{\max K_l}}, these cells will be set to NA. The parameters
+#' where category is indexed by 1 through maximum K_l; for variables where the number of 
+#' categories is less than maximum K_l, these cells will be set to NA. The parameters
 #' outputed by the lcra function currently are not user definable.
 #' 
 #' @references "Methods to account for uncertainty in latent class assignments 
