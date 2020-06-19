@@ -98,7 +98,7 @@ one column for each element of each saved parameter.
 \description{
 Given a set of categorical manifest outcomes, identify unmeasured class membership
 among subjects, and use latent class membership to predict regression outcome
-y jointly with a set of regressors.
+jointly with a set of regressors.
 }
 \details{
 Details on running lcra on different operating systems:
@@ -112,6 +112,29 @@ machines.
 The manifest variable columns in \strong{data} must be coded as numeric with positive
 numbers. For example, if one of the manifest outcomes takes on values 'Dislike', 'Neutral',
 and 'like', then code them as 1, 2, and 3.
+
+\strong{Model Definition}
+
+The LCRA model is as follows:
+
+\figure{model1.png}
+\figure{model2.png}
+
+The following priors are the default and cannot be altered by the user:
+
+\figure{model3.png}
+\figure{model4.png}
+
+Please note also that the reference category for latent classes in the outcome
+model output is always the \eqn{J}th latent class in the output, and the bugs
+output is defined by the Latin equivalent of the model parameters
+(beta, alpha, tau, pi, theta). Also, the bugs output includes the variable true,
+which corresponds to the MCMC draws of \eqn{C_i, i = 1,...,n}, as well as the MCMC
+draws of the deviance (DIC) statistic. Finally the bugs output for pi
+is stored in a three dimensional array corresponding to (class, variable, category),
+where category is indexed by 1 through \eqn{\underset{l}{\max K_l}}; for variables where the number of
+categories is less than \eqn{\underset{l}{\max K_l}}, these cells will be set to NA. The parameters
+outputed by the lcra function currently are not user definable.
 }
 \examples{
 \dontrun{
@@ -328,6 +351,94 @@ plot(fit.binom_latent3)
 fit.binom_latent3$median$true
 fit.binom_latent3$median$beta
 fit.binom_latent3$median$alpha
+
+
+# simulated examples
+
+library(gtools) # for Dirichel distribution
+
+# with binary response 
+
+n <- 500
+
+X1 <- runif(n, 2, 8)
+X2 <- rbinom(n, 1, .5)
+Cstar <- rnorm(n, .25 * X1 - .75 * X2, 1)
+C <- 1 * (Cstar <= .8) + 2 * ((Cstar > .8) & (Cstar <= 1.6)) + 3 * (Cstar > 1.6)
+
+theta1 <- rdirichlet(10, c(5, 4, 3, 2, 1))
+theta2 <- rdirichlet(10, c(1, 3, 5, 3, 1))
+theta3 <- rdirichlet(10, c(1, 2, 3, 4, 5))
+
+Z1<-(C==1)*t(rmultinom(n,1,theta1[1,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[1,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[1,]))\%*\%c(1:5)
+Z2<-(C==1)*t(rmultinom(n,1,theta1[2,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[2,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[2,]))\%*\%c(1:5)
+Z3<-(C==1)*t(rmultinom(n,1,theta1[3,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[3,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[3,]))\%*\%c(1:5)
+Z4<-(C==1)*t(rmultinom(n,1,theta1[4,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[4,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[4,]))\%*\%c(1:5)
+Z5<-(C==1)*t(rmultinom(n,1,theta1[5,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[5,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[5,]))\%*\%c(1:5)
+Z6<-(C==1)*t(rmultinom(n,1,theta1[6,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[6,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[6,]))\%*\%c(1:5)
+Z7<-(C==1)*t(rmultinom(n,1,theta1[7,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[7,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[7,]))\%*\%c(1:5)
+Z8<-(C==1)*t(rmultinom(n,1,theta1[8,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[8,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[8,]))\%*\%c(1:5)
+Z9<-(C==1)*t(rmultinom(n,1,theta1[9,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[9,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[9,]))\%*\%c(1:5)
+Z10<-(C==1)*t(rmultinom(n,1,theta1[10,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[10,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[10,]))\%*\%c(1:5)
+
+Z <- cbind(Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
+
+Y <- rbinom(n, 1, exp(-1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2)) / (1 + exp(1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2))))
+
+mydata = data.frame(Y, X1, X2, Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
+
+inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
+                  alpha = rep(0, length = 2), true = rep(1, length = nrow(mydata))))
+
+fit = lcra(formula = Y ~ X1 + X2, family = "binomial", data = mydata,
+           nclasses = 3, inits = inits, manifest = paste0("Z", 1:10),
+           n.chains = 1, n.iter = 1000)
+
+print(fit)
+plot(fit)
+
+# with continuous response
+
+n <- 500
+
+X1 <- runif(n, 2, 8)
+X2 <- rbinom(n, 1, .5)
+Cstar <- rnorm(n, .25*X1 - .75*X2, 1)
+C <- 1 * (Cstar <= .8) + 2*((Cstar > .8) & (Cstar <= 1.6)) + 3*(Cstar > 1.6)
+
+theta1 <- rdirichlet(10, c(5, 4, 3, 2, 1))
+theta2 <- rdirichlet(10, c(1, 3, 5, 3, 1))
+theta3 <- rdirichlet(10, c(1, 2, 3, 4, 5))
+theta4 <- rdirichlet(10, c(1, 1, 1, 1, 1))
+
+Z1<-(C==1)*t(rmultinom(n,1,theta1[1,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[1,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[1,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[1,]))\%*\%c(1:5)
+Z2<-(C==1)*t(rmultinom(n,1,theta1[2,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[2,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[2,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[2,]))\%*\%c(1:5)
+Z3<-(C==1)*t(rmultinom(n,1,theta1[3,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[3,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[3,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[3,]))\%*\%c(1:5)
+Z4<-(C==1)*t(rmultinom(n,1,theta1[4,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[4,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[4,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[4,]))\%*\%c(1:5)
+Z5<-(C==1)*t(rmultinom(n,1,theta1[5,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[5,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[5,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[5,]))\%*\%c(1:5)
+Z6<-(C==1)*t(rmultinom(n,1,theta1[6,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[6,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[6,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[6,]))\%*\%c(1:5)
+Z7<-(C==1)*t(rmultinom(n,1,theta1[7,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[7,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[7,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[7,]))\%*\%c(1:5)
+Z8<-(C==1)*t(rmultinom(n,1,theta1[8,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[8,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[8,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[8,]))\%*\%c(1:5)
+Z9<-(C==1)*t(rmultinom(n,1,theta1[9,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[9,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[9,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[9,]))\%*\%c(1:5)
+Z10<-(C==1)*t(rmultinom(n,1,theta1[10,]))\%*\%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[10,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[10,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[10,]))\%*\%c(1:5)
+
+Z <- cbind(Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
+
+Y <- rnorm(n, 10 - .5*X1 + 2*X2 + 2*(C == 1) + 1*(C == 2), 1)
+
+mydata = data.frame(Y, X1, X2, Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
+
+inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
+                  alpha = rep(0, length = 2), true = rep(1, length = nrow(mydata)), 
+                  tau = 0.5))
+
+fit = lcra(formula = Y ~ X1 + X2, family = "gaussian", data = mydata,
+           nclasses = 3, inits = inits, manifest = paste0("Z", 1:10),
+           n.chains = 1, n.iter = 1000)
+
+print(fit)
+plot(fit)
+
 }
 
 }
