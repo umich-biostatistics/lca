@@ -318,20 +318,31 @@
 #' theta2 <- rdirichlet(10, c(1, 3, 5, 3, 1))
 #' theta3 <- rdirichlet(10, c(1, 2, 3, 4, 5))
 #' 
-#' Z1<-(C==1)*t(rmultinom(n,1,theta1[1,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[1,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[1,]))%*%c(1:5)
-#' Z2<-(C==1)*t(rmultinom(n,1,theta1[2,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[2,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[2,]))%*%c(1:5)
-#' Z3<-(C==1)*t(rmultinom(n,1,theta1[3,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[3,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[3,]))%*%c(1:5)
-#' Z4<-(C==1)*t(rmultinom(n,1,theta1[4,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[4,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[4,]))%*%c(1:5)
-#' Z5<-(C==1)*t(rmultinom(n,1,theta1[5,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[5,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[5,]))%*%c(1:5)
-#' Z6<-(C==1)*t(rmultinom(n,1,theta1[6,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[6,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[6,]))%*%c(1:5)
-#' Z7<-(C==1)*t(rmultinom(n,1,theta1[7,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[7,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[7,]))%*%c(1:5)
-#' Z8<-(C==1)*t(rmultinom(n,1,theta1[8,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[8,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[8,]))%*%c(1:5)
-#' Z9<-(C==1)*t(rmultinom(n,1,theta1[9,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[9,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[9,]))%*%c(1:5)
-#' Z10<-(C==1)*t(rmultinom(n,1,theta1[10,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[10,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[10,]))%*%c(1:5)
+#' Z1<-(C==1)*t(rmultinom(n,1,theta1[1,]))%*%c(1:5)+(C==2)*
+#'      t(rmultinom(n,1,theta2[1,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[1,]))%*%c(1:5)
+#' Z2<-(C==1)*t(rmultinom(n,1,theta1[2,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[2,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[2,]))%*%c(1:5)
+#' Z3<-(C==1)*t(rmultinom(n,1,theta1[3,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[3,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[3,]))%*%c(1:5)
+#' Z4<-(C==1)*t(rmultinom(n,1,theta1[4,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[4,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[4,]))%*%c(1:5)
+#' Z5<-(C==1)*t(rmultinom(n,1,theta1[5,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[5,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[5,]))%*%c(1:5)
+#' Z6<-(C==1)*t(rmultinom(n,1,theta1[6,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[6,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[6,]))%*%c(1:5)
+#' Z7<-(C==1)*t(rmultinom(n,1,theta1[7,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[7,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[7,]))%*%c(1:5)
+#' Z8<-(C==1)*t(rmultinom(n,1,theta1[8,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[8,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[8,]))%*%c(1:5)
+#' Z9<-(C==1)*t(rmultinom(n,1,theta1[9,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[9,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[9,]))%*%c(1:5)
+#' Z10<-(C==1)*t(rmultinom(n,1,theta1[10,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[10,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[10,]))%*%c(1:5)
 #' 
 #' Z <- cbind(Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
 #' 
-#' Y <- rbinom(n, 1, exp(-1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2)) / (1 + exp(1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2))))
+#' Y <- rbinom(n, 1, exp(-1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2)) / 
+#'      (1 + exp(1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2))))
 #' 
 #' mydata = data.frame(Y, X1, X2, Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
 #' 
@@ -359,16 +370,36 @@
 #' theta3 <- rdirichlet(10, c(1, 2, 3, 4, 5))
 #' theta4 <- rdirichlet(10, c(1, 1, 1, 1, 1))
 #' 
-#' Z1<-(C==1)*t(rmultinom(n,1,theta1[1,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[1,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[1,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[1,]))%*%c(1:5)
-#' Z2<-(C==1)*t(rmultinom(n,1,theta1[2,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[2,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[2,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[2,]))%*%c(1:5)
-#' Z3<-(C==1)*t(rmultinom(n,1,theta1[3,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[3,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[3,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[3,]))%*%c(1:5)
-#' Z4<-(C==1)*t(rmultinom(n,1,theta1[4,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[4,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[4,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[4,]))%*%c(1:5)
-#' Z5<-(C==1)*t(rmultinom(n,1,theta1[5,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[5,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[5,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[5,]))%*%c(1:5)
-#' Z6<-(C==1)*t(rmultinom(n,1,theta1[6,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[6,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[6,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[6,]))%*%c(1:5)
-#' Z7<-(C==1)*t(rmultinom(n,1,theta1[7,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[7,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[7,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[7,]))%*%c(1:5)
-#' Z8<-(C==1)*t(rmultinom(n,1,theta1[8,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[8,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[8,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[8,]))%*%c(1:5)
-#' Z9<-(C==1)*t(rmultinom(n,1,theta1[9,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[9,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[9,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[9,]))%*%c(1:5)
-#' Z10<-(C==1)*t(rmultinom(n,1,theta1[10,]))%*%c(1:5)+(C==2)*t(rmultinom(n,1,theta2[10,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,theta3[10,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[10,]))%*%c(1:5)
+#' Z1<-(C==1)*t(rmultinom(n,1,theta1[1,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[1,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[1,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[1,]))%*%c(1:5)
+#' Z2<-(C==1)*t(rmultinom(n,1,theta1[2,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[2,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[2,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[2,]))%*%c(1:5)
+#' Z3<-(C==1)*t(rmultinom(n,1,theta1[3,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[3,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[3,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[3,]))%*%c(1:5)
+#' Z4<-(C==1)*t(rmultinom(n,1,theta1[4,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[4,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[4,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[4,]))%*%c(1:5)
+#' Z5<-(C==1)*t(rmultinom(n,1,theta1[5,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[5,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[5,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[5,]))%*%c(1:5)
+#' Z6<-(C==1)*t(rmultinom(n,1,theta1[6,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[6,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[6,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[6,]))%*%c(1:5)
+#' Z7<-(C==1)*t(rmultinom(n,1,theta1[7,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[7,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[7,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[7,]))%*%c(1:5)
+#' Z8<-(C==1)*t(rmultinom(n,1,theta1[8,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[8,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[8,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[8,]))%*%c(1:5)
+#' Z9<-(C==1)*t(rmultinom(n,1,theta1[9,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[9,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[9,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[9,]))%*%c(1:5)
+#' Z10<-(C==1)*t(rmultinom(n,1,theta1[10,]))%*%c(1:5)+(C==2)*
+#'     t(rmultinom(n,1,theta2[10,]))%*%c(1:5)+(C==3)*
+#'     t(rmultinom(n,1,theta3[10,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,theta4[10,]))%*%c(1:5)
 #' 
 #' Z <- cbind(Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
 #' 
@@ -557,6 +588,11 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
   response = c()
   tau = c()
   
+  i <- NULL
+  inprod <- NULL 
+  alpha <- NULL
+  `logit<-` <- NULL
+  
   if(family == "gaussian") {
     response = expr(y[i] ~ dnorm(yhat[i], tau))
     regression = expr(yhat[i] <- inprod(x[i,], beta[]) + inprod(C[i,], alpha[]))
@@ -627,6 +663,8 @@ lcra = function(formula, family, data, nclasses, manifest, inits = NULL, dir,
 
 constr_bugs_model = function(N, n_manifest, n_beta, nclasses, npriors,
                              regression, response, tau) {
+  
+  true <- NULL
   
   constructor = function() {
     

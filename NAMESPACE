@@ -8,3 +8,6 @@ importFrom(R2WinBUGS, write.model)
 S3method(plot, lcra)
 S3method(print, lcra)
 importFrom(stats, model.matrix)
+importFrom("graphics", "layout", "lines", "mtext", "par", "points",
+               "strheight", "strwidth", "text")
+importFrom("stats", "C", "median", "quantile", "step")

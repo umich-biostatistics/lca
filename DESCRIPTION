@@ -9,12 +9,10 @@ Description: R package for Bayesian joint latent class and regression models.
     using latent classes as predictors in regression models, with application to 
     acculturation strategy measures" (2020) In press at Epidemiology
     <doi:10.1097/EDE.0000000000001139>.
-Authors@R: 
-    c(
+Authors@R: c(
     person(given = "Michael", family = "Elliot", role = c("aut"), email = "mrelliot@umich.edu"),
     person(given = "Zhangchen", family = "Zhao", role = c("aut"), email = "zczhao@umich.edu"),
-    person(given = "Michael", family = "Kleinsasser", role = c("cre"), email = "mkleinsa@umich.edu")
-    )
+    person(given = "Michael", family = "Kleinsasser", role = c("aut", "cre"), email = "mkleinsa@umich.edu"))
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
