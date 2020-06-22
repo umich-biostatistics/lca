@@ -77,7 +77,7 @@
 #' is stored in a three dimensional array corresponding to (class, variable, category),
 #' where category is indexed by 1 through maximum K_l; for variables where the number of 
 #' categories is less than maximum K_l, these cells will be set to NA. The parameters
-#' outputed by the lcra function currently are not user definable.
+#' outputted by the lcra function currently are not user definable.
 #' 
 #' @references "Methods to account for uncertainty in latent class assignments 
 #' when using latent classes as predictors in regression models, with application 
