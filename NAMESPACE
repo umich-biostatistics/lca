@@ -9,5 +9,5 @@ S3method(plot, lcra)
 S3method(print, lcra)
 importFrom(stats, model.matrix)
 importFrom("graphics", "layout", "lines", "mtext", "par", "points",
-               "strheight", "strwidth", "text")
+               "strheight", "strwidth", "text", "plot")
 importFrom("stats", "C", "median", "quantile", "step")
