@@ -6,16 +6,18 @@
 \usage{
 lcra(
   formula,
-  family,
   data,
+  family,
   nclasses,
   manifest,
+  sampler = "JAGS",
   inits = NULL,
   dir,
   n.chains = 3,
   n.iter = 2000,
   n.burnin = n.iter/2,
   n.thin = 1,
+  n.adapt = 1000,
   useWINE = FALSE,
   WINE,
   debug = FALSE,
@@ -28,16 +30,16 @@ a regression model is to be fitted, specify a formula using R standard syntax,
 e.g., Y ~ age + sex + trt. Do not include manifest variables in the regression
 model specification. These will be appended internally as latent classes.}
 
-\item{family}{a description of the error distribution to
-be used in the model. Currently the options are c("gaussian") with identity
-link and c("binomial") which uses a logit link.}
-
 \item{data}{data.frame with the column names specified in the regression formula
 and the manifest argument. The columns used in the regression formula can be of
 any type and will be dealt with using normal R behaviour. The manifest variable
 columns, however, must be coded as numeric using positive integers. For example,
 if one of the manifest outcomes takes on values 'Dislike', 'Neutral',
 and 'like', then code them as 1, 2, and 3.}
+
+\item{family}{a description of the error distribution to
+be used in the model. Currently the options are c("gaussian") with identity
+link and c("binomial") which uses a logit link.}
 
 \item{nclasses}{numeric, number of latent classes}
 
@@ -47,12 +49,16 @@ be numerically coded with levels 1 through n_levels, where n_levels is the numbe
 of levels for the ith manifest variable. The function will throw an error message
 if they are not coded properly.}
 
-\item{inits}{list of initial values for R2WinBUGS. Defaults will be set if nothing
+\item{sampler}{which MCMC sampler to use? lcra relies on Gibbs sampling,
+where the options are "WinBUGS" or "JAGS". sampler = "JAGS" is the default,
+and is recommended}
+
+\item{inits}{list of initial values. Defaults will be set if nothing
 is specified. Inits must be a list with n.chains elements; each element of the list
-is itself a list of starting values for the WinBUGS model.}
+is itself a list of starting values for the model.}
 
 \item{dir}{Specify full path to the directory where you want
-to store the WinBUGS output files and BUGS model file.}
+to store the model file.}
 
 \item{n.chains}{number of Markov chains.}
 
@@ -76,24 +82,7 @@ attempt to find the WINE installation on your machine.}
 arguments to pass into bugs.}
 }
 \value{
-A list containing the following items:
-\itemize{
-\item \strong{sims.array}: 3-dimensional array of simulation output, with dimensions n,
-n.chains, and length of combined parameter vector.
-\item \strong{sims.list}: list of simulated parameters: for each scalar parameter,
-a vector of length n.sims for each vector parameter; a 2-way array of simulations,
-for each matrix parameter.
-\item \strong{sims.matrix}: matrix of simulation output, with n.chains x n rows and
-one column for each element of each saved parameter.
-\item \strong{summary}: summary statistics and convergence information for each saved parameter.
-\item \strong{mean}: a list of the estimated parameter means.
-\item \strong{sd}: a list of the estimated parameter standard deviations.
-\item \strong{median}: a list of the estimated parameter medians.
-\item \strong{model.frame}: the model frame.
-\item \strong{model.matrix}: the model matrix.
-\item \strong{bugs.object}: the complete bugs object.
-\item \strong{model}: the BUGS model as a function.
-}
+An MCMC list of class \strong{mcmc.list}, which can be analyzed with the coda package
 }
 \description{
 Given a set of categorical manifest outcomes, identify unmeasured class membership
@@ -101,7 +90,11 @@ among subjects, and use latent class membership to predict regression outcome
 jointly with a set of regressors.
 }
 \details{
-Details on running lcra on different operating systems:
+lcra allows for two different Gibbs samplers to be used. The options are
+WinBUGS or JAGS. If you are not on a Windows system, WinBUGS can be
+very difficult to get working. For this reason, JAGS is the default.
+
+For further instructions on using WinBUGS, read this:
 \itemize{
 \item Microsoft Windows: no problems or additional set-up required
 \item Linux, Mac OS X, Unix: possible with the Wine emulator via useWine = TRUE.
@@ -139,218 +132,39 @@ outputted by the lcra function currently are not user definable.
 \examples{
 \dontrun{
 
-# Express example
+# quick example
 
 inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3), 
                   alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = nrow(express))))
-         
+
 fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
            n.chains = 1, n.iter = 500)
-  
-fit$mean$alpha
-
-fit$mean$beta
-
-fit$median$true
 
 
-# Data sets 1 and 2
 data('paper_sim')
-data('paper_sim_binary')
 
 # Set initial values
 inits =
   list(
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      tau = 0.5,
-      true = rep(1, length = 100)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      tau = 0.5,
-      true = rep(1, length = 100)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      tau = 0.5,
-      true = rep(1, length = 100)
-    )
-  )
-
-inits_binary =
-  list(
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 100)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 100)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 100)
-    )
+    list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
+         alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = 100)),
+    list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
+         alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = 100)),
+    list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
+         alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = 100))
   )
 
 # Fit model 1
-fit.gaus_paper =
-  lcra(
-    formula = Y ~ X1 + X2,
-    family = "gaussian",
-    data = paper_sim,
-    nclasses = 3,
-    manifest = paste0("Z", 1:10),
-    inits = inits,
-    dir = tempdir(),
-    n.chains = 3,
-    n.iter = 5000
-  )
+fit.gaus_paper = lcra(formula = Y ~ X1 + X2, family = "gaussian",
+                      data = paper_sim, nclasses = 3, manifest = paste0("Z", 1:10),
+                      inits = inits, n.chains = 3, n.iter = 5000)
 
 # Model 1 results
-print(fit.gaus_paper, digits = 3)
+library(coda)
+
+summary(fit.gaus_paper)
 plot(fit.gaus_paper)
-
-# Extract results
-fit.gaus_paper$median$true
-fit.gaus_paper$median$beta
-fit.gaus_paper$median$alpha
-
-# Fit model 2
-fit.binom_paper = 
-  lcra(
-    formula = Y ~ X1 + X2,
-    family = "binomial",
-    data = paper_sim_binary,
-    nclasses = 3,
-    manifest = paste0("Z", 1:10),
-    inits = inits_binary,
-    dir = tempdir(),
-    n.chains = 3,
-    n.iter = 5000
-  )
-
-# Model 2 results
-print(fit.binom_paper, digits = 3)
-plot(fit.binom_paper)
-
-# Extract results
-fit.binom_paper$median$true
-fit.binom_paper$median$beta
-fit.binom_paper$median$alpha
-
-
-# Data sets 3 and 4
-data('latent3')
-data('latent3_binary')
-
-# Set initial values
-inits =
-  list(
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 350),
-      tau = 0.5
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 350),
-      tau = 0.5
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 350),
-      tau = 0.5
-    )
-  )
-
-inits_binary =
-  list(
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 350)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 350)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 5),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 350)
-    )
-  )
-
-# Fit model 3
-fit.gaus_latent3 =
-  lcra(
-    formula = y ~ x1 + x2 + x3 + x4,
-    family = "gaussian",
-    data = latent3,
-    nclasses = 3,
-    manifest = paste0("Z", 1:12),
-    inits = inits,
-    dir = tempdir(),
-    n.chains = 3,
-    n.iter = 5000
-  )
-
-# Model 3 results
-print(fit.gaus_latent3, digits = 3)
-plot(fit.gaus_latent3)
-
-# Extract results
-fit.gaus_latent3$median$true
-fit.gaus_latent3$median$beta
-fit.gaus_latent3$median$alpha
-
-# Fit model 4
-fit.binom_latent3 = 
-  lcra(
-    formula = y ~ x1 + x2 + x3 + x4,
-    family = "binomial",
-    data = latent3_binary,
-    nclasses = 3,
-    manifest = paste0("Z", 1:12),
-    inits = inits_binary,
-    dir = tempdir(),
-    n.chains = 3,
-    n.iter = 5000
-  )
-
-# Model 4 results
-print(fit.binom_latent3, digits = 3)
-plot(fit.binom_latent3)
-
-# Extract results
-fit.binom_latent3$median$true
-fit.binom_latent3$median$beta
-fit.binom_latent3$median$alpha
 
 
 # simulated examples
@@ -371,30 +185,30 @@ pi2 <- rdirichlet(10, c(1, 3, 5, 3, 1))
 pi3 <- rdirichlet(10, c(1, 2, 3, 4, 5))
 
 Z1<-(C==1)*t(rmultinom(n,1,pi1[1,]))\%*\%c(1:5)+(C==2)*
-     t(rmultinom(n,1,pi2[1,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[1,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[1,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[1,]))\%*\%c(1:5)
 Z2<-(C==1)*t(rmultinom(n,1,pi1[2,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[2,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[2,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[2,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[2,]))\%*\%c(1:5)
 Z3<-(C==1)*t(rmultinom(n,1,pi1[3,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[3,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[3,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[3,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[3,]))\%*\%c(1:5)
 Z4<-(C==1)*t(rmultinom(n,1,pi1[4,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[4,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[4,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[4,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[4,]))\%*\%c(1:5)
 Z5<-(C==1)*t(rmultinom(n,1,pi1[5,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[5,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[5,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[5,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[5,]))\%*\%c(1:5)
 Z6<-(C==1)*t(rmultinom(n,1,pi1[6,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[6,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[6,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[6,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[6,]))\%*\%c(1:5)
 Z7<-(C==1)*t(rmultinom(n,1,pi1[7,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[7,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[7,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[7,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[7,]))\%*\%c(1:5)
 Z8<-(C==1)*t(rmultinom(n,1,pi1[8,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[8,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[8,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[8,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[8,]))\%*\%c(1:5)
 Z9<-(C==1)*t(rmultinom(n,1,pi1[9,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[9,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[9,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[9,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[9,]))\%*\%c(1:5)
 Z10<-(C==1)*t(rmultinom(n,1,pi1[10,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[10,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[10,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[10,]))\%*\%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[10,]))\%*\%c(1:5)
 
 Z <- cbind(Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
 
 Y <- rbinom(n, 1, exp(-1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2)) / 
-     (1 + exp(1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2))))
+              (1 + exp(1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2))))
 
 mydata = data.frame(Y, X1, X2, Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
 
@@ -405,7 +219,7 @@ fit = lcra(formula = Y ~ X1 + X2, family = "binomial", data = mydata,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:10),
            n.chains = 1, n.iter = 1000)
 
-print(fit)
+summary(fit)
 plot(fit)
 
 # with continuous response
@@ -423,35 +237,35 @@ pi3 <- rdirichlet(10, c(1, 2, 3, 4, 5))
 pi4 <- rdirichlet(10, c(1, 1, 1, 1, 1))
 
 Z1<-(C==1)*t(rmultinom(n,1,pi1[1,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[1,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[1,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[1,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[1,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[1,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[1,]))\%*\%c(1:5)
 Z2<-(C==1)*t(rmultinom(n,1,pi1[2,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[2,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[2,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[2,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[2,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[2,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[2,]))\%*\%c(1:5)
 Z3<-(C==1)*t(rmultinom(n,1,pi1[3,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[3,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[3,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[3,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[3,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[3,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[3,]))\%*\%c(1:5)
 Z4<-(C==1)*t(rmultinom(n,1,pi1[4,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[4,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[4,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[4,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[4,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[4,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[4,]))\%*\%c(1:5)
 Z5<-(C==1)*t(rmultinom(n,1,pi1[5,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[5,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[5,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[5,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[5,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[5,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[5,]))\%*\%c(1:5)
 Z6<-(C==1)*t(rmultinom(n,1,pi1[6,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[6,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[6,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[6,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[6,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[6,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[6,]))\%*\%c(1:5)
 Z7<-(C==1)*t(rmultinom(n,1,pi1[7,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[7,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[7,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[7,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[7,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[7,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[7,]))\%*\%c(1:5)
 Z8<-(C==1)*t(rmultinom(n,1,pi1[8,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[8,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[8,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[8,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[8,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[8,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[8,]))\%*\%c(1:5)
 Z9<-(C==1)*t(rmultinom(n,1,pi1[9,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[9,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[9,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[9,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[9,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[9,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[9,]))\%*\%c(1:5)
 Z10<-(C==1)*t(rmultinom(n,1,pi1[10,]))\%*\%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[10,]))\%*\%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[10,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[10,]))\%*\%c(1:5)
+  t(rmultinom(n,1,pi2[10,]))\%*\%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[10,]))\%*\%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[10,]))\%*\%c(1:5)
 
 Z <- cbind(Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
 
@@ -467,7 +281,7 @@ fit = lcra(formula = Y ~ X1 + X2, family = "gaussian", data = mydata,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:10),
            n.chains = 1, n.iter = 1000)
 
-print(fit)
+summary(fit)
 plot(fit)
 
 }

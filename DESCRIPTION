@@ -20,8 +20,11 @@ Biarch: true
 Depends: 
     R (>= 3.4.0)
 Imports: 
-    R2WinBUGS,
-    rlang
+    rlang,
+    coda,
+    rjags
+Suggests:
+    R2WinBUGS
 SystemRequirements: GNU make
 URL: https://github.com/umich-biostatistics/lcra
 BugReports: https://github.com/umich-biostatistics/lcra/issues

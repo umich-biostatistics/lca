@@ -39,17 +39,19 @@ press at Epidemiology. <doi:10.1097/EDE.0000000000001139>
 
 ## Installation
 
-This package uses the R interface for WinBUGS called `R2WinBUGS`. The
-package `R2WinBUGS` in turn depends on the standalone Windows program
-`WinBUGS`. Follow this link: [University of Cambridge MRC Biostatistics
-Unit](https://www.mrc-bsu.cam.ac.uk/software/bugs/the-bugs-project-winbugs/)
-for WinBUGS download and installation instructions. `WinBUGS` can also
-be used on Mac using the additional software
-[Wine](https://www.winehq.org/). Plenty of tutorials that demonstrate
-install of WinBUGS on non-Windows machines are available on Google. With
-a bit of work, unix users can run this software, too.
+JAGS is the new default Gibbs sampler for the package. Install JAGS
+here: [JAGS Download](http://mcmc-jags.sourceforge.net/).
 
-Once the standalone `WinBUGS` program is installed, open R and run:
+This package uses the R interface for JAGS and WinBUGS. The package
+`R2WinBUGS` in turn depends on the standalone Windows program `WinBUGS`,
+and `rjags` depends on the standalone program JAGS. Follow this link:
+[University of Cambridge MRC Biostatistics
+Unit](https://www.mrc-bsu.cam.ac.uk/software/bugs/the-bugs-project-winbugs/)
+for WinBUGS download and installation instructions. Follow this link:
+[JAGS Download](http://mcmc-jags.sourceforge.net/) for JAGS download and
+installation instructions.
+
+Once you’ve chosen between JAGS or WinBUGS, open R and run:
 
 If the devtools package is not yet installed, install it first:
 
@@ -71,16 +73,12 @@ library(lcra)
 ``` r
 inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3), 
                   alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = nrow(express))))
-         
+
 fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
            n.chains = 1, n.iter = 500)
 
-fit$mean$alpha
-fit$mean$beta
-fit$median$true
-
-print(fit)
+summary(fit)
 plot(fit)
 ```
 
@@ -121,104 +119,40 @@ Here is an example analysis on simulated data with continuous and
 discrete outcomes:
 
 ``` r
-# Data sets 1 and 2
+
+# quick example
+
+inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3), 
+                  alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = nrow(express))))
+
+fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
+           nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
+           n.chains = 1, n.iter = 500)
+
+
 data('paper_sim')
-data('paper_sim_binary')
 
 # Set initial values
 inits =
   list(
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      tau = 0.5,
-      true = rep(1, length = 100)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      tau = 0.5,
-      true = rep(1, length = 100)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      tau = 0.5,
-      true = rep(1, length = 100)
-    )
-  )
-
-inits_binary =
-  list(
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 100)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 100)
-    ),
-    list(
-      theta = c(0.33, 0.33, 0.34),
-      beta = rep(0, length = 3),
-      alpha = rep(0, length = 2),
-      true = rep(1, length = 100)
-    )
+    list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
+         alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = 100)),
+    list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
+         alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = 100)),
+    list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
+         alpha = rep(0, length = 2), tau = 0.5, true = rep(1, length = 100))
   )
 
 # Fit model 1
-fit.gaus_paper =
-  lcra(
-    formula = Y ~ X1 + X2,
-    family = "gaussian",
-    data = paper_sim,
-    nclasses = 3,
-    manifest = paste0("Z", 1:10),
-    inits = inits,
-    dir = tempdir(),
-    n.chains = 3,
-    n.iter = 5000
-  )
+fit.gaus_paper = lcra(formula = Y ~ X1 + X2, family = "gaussian",
+                      data = paper_sim, nclasses = 3, manifest = paste0("Z", 1:10),
+                      inits = inits, n.chains = 3, n.iter = 5000)
 
 # Model 1 results
-print(fit.gaus_paper, digits = 3)
+library(coda)
+
+summary(fit.gaus_paper)
 plot(fit.gaus_paper)
-
-# Extract results
-fit.gaus_paper$median$true
-fit.gaus_paper$median$beta
-fit.gaus_paper$median$alpha
-
-# Fit model 2
-fit.binom_paper = 
-  lcra(
-    formula = Y ~ X1 + X2,
-    family = "binomial",
-    data = paper_sim_binary,
-    nclasses = 3,
-    manifest = paste0("Z", 1:10),
-    inits = inits_binary,
-    dir = tempdir(),
-    n.chains = 3,
-    n.iter = 5000
-  )
-
-# Model 2 results
-print(fit.binom_paper, digits = 3)
-plot(fit.binom_paper)
-
-# Extract results
-fit.binom_paper$median$true
-fit.binom_paper$median$beta
-fit.binom_paper$median$alpha
-
 
 
 # simulated examples
@@ -239,30 +173,30 @@ pi2 <- rdirichlet(10, c(1, 3, 5, 3, 1))
 pi3 <- rdirichlet(10, c(1, 2, 3, 4, 5))
 
 Z1<-(C==1)*t(rmultinom(n,1,pi1[1,]))%*%c(1:5)+(C==2)*
-     t(rmultinom(n,1,pi2[1,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[1,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[1,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[1,]))%*%c(1:5)
 Z2<-(C==1)*t(rmultinom(n,1,pi1[2,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[2,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[2,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[2,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[2,]))%*%c(1:5)
 Z3<-(C==1)*t(rmultinom(n,1,pi1[3,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[3,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[3,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[3,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[3,]))%*%c(1:5)
 Z4<-(C==1)*t(rmultinom(n,1,pi1[4,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[4,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[4,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[4,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[4,]))%*%c(1:5)
 Z5<-(C==1)*t(rmultinom(n,1,pi1[5,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[5,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[5,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[5,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[5,]))%*%c(1:5)
 Z6<-(C==1)*t(rmultinom(n,1,pi1[6,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[6,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[6,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[6,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[6,]))%*%c(1:5)
 Z7<-(C==1)*t(rmultinom(n,1,pi1[7,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[7,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[7,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[7,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[7,]))%*%c(1:5)
 Z8<-(C==1)*t(rmultinom(n,1,pi1[8,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[8,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[8,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[8,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[8,]))%*%c(1:5)
 Z9<-(C==1)*t(rmultinom(n,1,pi1[9,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[9,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[9,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[9,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[9,]))%*%c(1:5)
 Z10<-(C==1)*t(rmultinom(n,1,pi1[10,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[10,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[10,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[10,]))%*%c(1:5)+(C==3)*t(rmultinom(n,1,pi3[10,]))%*%c(1:5)
 
 Z <- cbind(Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
 
 Y <- rbinom(n, 1, exp(-1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2)) / 
-     (1 + exp(1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2))))
+              (1 + exp(1 - .1*X1 + X2 + 2*(C == 1) + 1*(C == 2))))
 
 mydata = data.frame(Y, X1, X2, Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
 
@@ -273,7 +207,7 @@ fit = lcra(formula = Y ~ X1 + X2, family = "binomial", data = mydata,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:10),
            n.chains = 1, n.iter = 1000)
 
-print(fit)
+summary(fit)
 plot(fit)
 
 # with continuous response
@@ -291,35 +225,35 @@ pi3 <- rdirichlet(10, c(1, 2, 3, 4, 5))
 pi4 <- rdirichlet(10, c(1, 1, 1, 1, 1))
 
 Z1<-(C==1)*t(rmultinom(n,1,pi1[1,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[1,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[1,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[1,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[1,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[1,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[1,]))%*%c(1:5)
 Z2<-(C==1)*t(rmultinom(n,1,pi1[2,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[2,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[2,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[2,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[2,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[2,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[2,]))%*%c(1:5)
 Z3<-(C==1)*t(rmultinom(n,1,pi1[3,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[3,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[3,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[3,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[3,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[3,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[3,]))%*%c(1:5)
 Z4<-(C==1)*t(rmultinom(n,1,pi1[4,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[4,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[4,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[4,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[4,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[4,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[4,]))%*%c(1:5)
 Z5<-(C==1)*t(rmultinom(n,1,pi1[5,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[5,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[5,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[5,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[5,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[5,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[5,]))%*%c(1:5)
 Z6<-(C==1)*t(rmultinom(n,1,pi1[6,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[6,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[6,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[6,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[6,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[6,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[6,]))%*%c(1:5)
 Z7<-(C==1)*t(rmultinom(n,1,pi1[7,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[7,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[7,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[7,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[7,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[7,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[7,]))%*%c(1:5)
 Z8<-(C==1)*t(rmultinom(n,1,pi1[8,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[8,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[8,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[8,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[8,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[8,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[8,]))%*%c(1:5)
 Z9<-(C==1)*t(rmultinom(n,1,pi1[9,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[9,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[9,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[9,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[9,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[9,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[9,]))%*%c(1:5)
 Z10<-(C==1)*t(rmultinom(n,1,pi1[10,]))%*%c(1:5)+(C==2)*
-    t(rmultinom(n,1,pi2[10,]))%*%c(1:5)+(C==3)*
-    t(rmultinom(n,1,pi3[10,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[10,]))%*%c(1:5)
+  t(rmultinom(n,1,pi2[10,]))%*%c(1:5)+(C==3)*
+  t(rmultinom(n,1,pi3[10,]))%*%c(1:5)+(C==4)*t(rmultinom(n,1,pi4[10,]))%*%c(1:5)
 
 Z <- cbind(Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10)
 
@@ -335,7 +269,7 @@ fit = lcra(formula = Y ~ X1 + X2, family = "gaussian", data = mydata,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:10),
            n.chains = 1, n.iter = 1000)
 
-print(fit)
+summary(fit)
 plot(fit)
 ```
 
