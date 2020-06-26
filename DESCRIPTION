@@ -1,5 +1,5 @@
 Package: lcra
-Version: 1.1.0.9
+Version: 1.1.2
 Title: Bayesian Joint Latent Class and Regression Models
 Type: Package
 Description: R package for Bayesian joint latent class and regression models. 
