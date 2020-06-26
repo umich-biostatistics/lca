@@ -4,7 +4,7 @@
 # R package `lcra`
 
 [![](https://img.shields.io/badge/doi-10.1097/EDE.0000000000001139-yellow.svg)](https://doi.org/10.1097/EDE.0000000000001139)
-[![](https://img.shields.io/badge/devel%20version-1.1.0.9-blue.svg)](https://github.com/umich-biostatistics/lcra)
+[![](https://img.shields.io/badge/devel%20version-1.1.2-blue.svg)](https://github.com/umich-biostatistics/lcra)
 [![](https://img.shields.io/github/languages/code-size/umich-biostatistics/lcra.svg)](https://github.com/umich-biostatistics/lcra)
 
 A user-friendly interface for doing joint Bayesian latent class and
