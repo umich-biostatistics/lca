@@ -28,7 +28,7 @@ This is the only package available for joint latent class and regression analysi
 
 This `R` package provides a user-friendly interface for fitting Bayesian joint latent class and regression models. Using the standard R syntax, the user can specify the form of the regression model and the desired number of latent classes.
 
-The technical details of the model implemented here are described in Elliott, Michael R., Zhao, Zhangchen, Mukherjee, Bhramar, Kanaya, Alka, Needham, Belinda L., "Methods to account for uncertainty in latent class assignments when using latent classes as predictors in regression models, with application to acculturation strategy measures" (2020) In press at Epidemiology. <doi:10.1097/EDE.0000000000001139>
+The technical details of the model implemented here are described in Elliott, Michael R., Zhao, Zhangchen, Mukherjee, Bhramar, Kanaya, Alka, Needham, Belinda L., "Methods to account for uncertainty in latent class assignments when using latent classes as predictors in regression models, with application to acculturation strategy measures" (2020) In press at Epidemiology.
 
 ## Installation
 
@@ -63,6 +63,8 @@ fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
            n.chains = 1, n.iter = 500)
 
+# use coda to analyze samples
+library(coda)
 summary(fit)
 plot(fit)
 ```
@@ -257,4 +259,4 @@ plot(fit)
 
 ### Current Suggested Citation
 
-"Methods to account for uncertainty in latent class assignments when using latent classes as predictors in regression models, with application to acculturation strategy measures" (2020) In press at Epidemiology. <doi:10.1097/EDE.0000000000001139>
+"Methods to account for uncertainty in latent class assignments when using latent classes as predictors in regression models, with application to acculturation strategy measures" (2020) In press at Epidemiology.

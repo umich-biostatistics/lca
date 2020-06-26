@@ -35,7 +35,7 @@ Elliott, Michael R., Zhao, Zhangchen, Mukherjee, Bhramar, Kanaya, Alka,
 Needham, Belinda L., “Methods to account for uncertainty in latent class
 assignments when using latent classes as predictors in regression
 models, with application to acculturation strategy measures” (2020) In
-press at Epidemiology. <doi:10.1097/EDE.0000000000001139>
+press at Epidemiology.
 
 ## Installation
 
@@ -78,6 +78,8 @@ fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
            n.chains = 1, n.iter = 500)
 
+# use coda to analyze samples
+library(coda)
 summary(fit)
 plot(fit)
 ```
@@ -278,4 +280,4 @@ plot(fit)
 “Methods to account for uncertainty in latent class assignments when
 using latent classes as predictors in regression models, with
 application to acculturation strategy measures” (2020) In press at
-Epidemiology. <doi:10.1097/EDE.0000000000001139>
+Epidemiology.
