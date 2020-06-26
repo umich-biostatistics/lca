@@ -70,6 +70,9 @@ at the beginning. Default is n.iter/2.}
 \item{n.thin}{thinning rate. Must be a positive integer. Set n.thin > 1 to save
 memory and computing time if n.iter is large.}
 
+\item{n.adapt}{number of adaptive samples to take when using JAGS. See the
+JAGS documentation for more information.}
+
 \item{useWINE}{logical, attempt to use the Wine emulator to run WinBUGS, defaults
 to FALSE on Windows and TRUE otherwise.}
 

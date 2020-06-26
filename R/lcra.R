@@ -45,6 +45,8 @@
 #' @param sampler which MCMC sampler to use? lcra relies on Gibbs sampling,
 #' where the options are "WinBUGS" or "JAGS". sampler = "JAGS" is the default,
 #' and is recommended
+#' @param n.adapt number of adaptive samples to take when using JAGS. See the
+#' JAGS documentation for more information.
 #' 
 #' @details 
 #' lcra allows for two different Gibbs samplers to be used. The options are
@@ -425,11 +427,11 @@ lcra = function(formula, data, family, nclasses, manifest, sampler = "JAGS",
   
   # write model
   filename <- file.path(dir, "model.text")
-  write.model(model, filename)
+  R2WinBUGS::write.model(model, filename)
   
   if(sampler == "JAGS") {
     suppressWarnings({
-      model_jags = rjags::jags.model(
+      model_jags = jags.model(
         file = filename,
         data = dat_list,
         inits = inits,
@@ -438,7 +440,7 @@ lcra = function(formula, data, family, nclasses, manifest, sampler = "JAGS",
         quiet = FALSE)
       
       samp_lcra = window(
-        rjags::coda.samples(
+        coda.samples(
           model = model_jags,
           variable.names = parameters.to.save,
           n.iter = n.iter,
@@ -447,7 +449,7 @@ lcra = function(formula, data, family, nclasses, manifest, sampler = "JAGS",
     })
   } else if(sampler == "WinBUGS") {
     suppressWarnings({
-      samp_lcra = coda::as.mcmc.list(
+      samp_lcra = as.mcmc.list(
         R2WinBUGS::bugs(data = dat_list, 
              inits = inits,
              model.file = filename, 
