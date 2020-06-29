@@ -85,7 +85,10 @@ attempt to find the WINE installation on your machine.}
 arguments to pass into bugs.}
 }
 \value{
-An MCMC list of class \strong{mcmc.list}, which can be analyzed with the coda package
+An MCMC list of class \strong{mcmc.list}, which can be analyzed with the coda package.
+Each column is a parameter and each row is a draw. You can extract a parameter
+by name, e.g., fit[,"beta[1]"]. For a list of all parameter names from the fit,
+call colnames(as.matrix(fit)), which returns a character vector with the names.
 }
 \description{
 Given a set of categorical manifest outcomes, identify unmeasured class membership

@@ -251,7 +251,10 @@
 #' }
 #' 
 #' @return 
-#' An MCMC list of class **mcmc.list**, which can be analyzed with the coda package
+#' An MCMC list of class **mcmc.list**, which can be analyzed with the coda package.
+#' Each column is a parameter and each row is a draw. You can extract a parameter 
+#' by name, e.g., fit[,"beta\[1\]"]. For a list of all parameter names from the fit, 
+#' call colnames(as.matrix(fit)), which returns a character vector with the names.
 #' 
 
 lcra = function(formula, data, family, nclasses, manifest, sampler = "JAGS", 
