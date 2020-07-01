@@ -142,7 +142,7 @@ categories is less than maximum K_l, these cells will be set to NA. The paramete
 outputted by the lcra function currently are not user definable.
 }
 \examples{
-\dontrun{
+if(requireNamespace("rjags")){
 
 # quick example
 

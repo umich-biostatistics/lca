@@ -94,7 +94,7 @@
 #' doi:10.1097/EDE.0000000000001139
 #' 
 #' @examples 
-#' \dontrun{
+#' if(requireNamespace("rjags")){
 #' 
 #' # quick example
 #' 
@@ -436,10 +436,10 @@ lcra = function(formula, data, family, nclasses, manifest, sampler = "JAGS",
   
   # write model
   filename <- file.path(dir, "model.text")
-  R2WinBUGS::write.model(model, filename)
+  write_model(model, filename)
   
   if(sampler == "JAGS") {
-    suppressWarnings({
+    
       model_jags = jags.model(
         file = filename,
         data = dat_list,
@@ -455,9 +455,9 @@ lcra = function(formula, data, family, nclasses, manifest, sampler = "JAGS",
           n.iter = n.iter,
           thin = 1
         ), start = n.burnin)
-    })
+    
   } else if(sampler == "WinBUGS") {
-    suppressWarnings({
+    
       samp_lcra = as.mcmc.list(
         R2WinBUGS::bugs(data = dat_list, 
              inits = inits,
@@ -470,7 +470,7 @@ lcra = function(formula, data, family, nclasses, manifest, sampler = "JAGS",
              n.thin = n.thin, 
              useWINE = useWINE, 
              WINE = WINE, ...))
-    })
+    
   } else {
     stop('Sampler name is not one of the options, which are JAGS and WinBUGS.')
   }
