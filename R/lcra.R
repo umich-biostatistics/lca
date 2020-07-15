@@ -103,9 +103,8 @@
 #' 
 #' fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
 #'            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
-#'            n.chains = 1, n.iter = 500)
-#' 
-#' 
+#'            n.chains = 1, n.iter = 50)
+#' \donttest{
 #' data('paper_sim')
 #' 
 #' # Set initial values
@@ -249,7 +248,7 @@
 #' plot(fit)
 #' 
 #' }
-#' 
+#' }
 #' @return 
 #' Return type depends on the sampler chosen. 
 #' 

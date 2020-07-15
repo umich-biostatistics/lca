@@ -151,9 +151,8 @@ inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3),
 
 fit = lcra(formula = y ~ x1 + x2, family = "gaussian", data = express,
            nclasses = 3, inits = inits, manifest = paste0("Z", 1:5),
-           n.chains = 1, n.iter = 500)
-
-
+           n.chains = 1, n.iter = 50)
+\donttest{
 data('paper_sim')
 
 # Set initial values
@@ -297,7 +296,7 @@ summary(fit)
 plot(fit)
 
 }
-
+}
 }
 \references{
 "Methods to account for uncertainty in latent class assignments
