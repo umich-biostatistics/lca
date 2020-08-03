@@ -34,6 +34,8 @@ print.bugs <- function(x, digits.summary = 1, ...)
 }
 
 plot.bugs <- function (x, display.parallel = FALSE, ...){
+  oldpar <- par(no.readonly = TRUE)    # code line i
+  on.exit(par(oldpar))            # code line i + 1
   mar.old <- par("mar")
   pty.old <- par(pty = "m")
   mfrow.old <- par("mfrow")
@@ -59,7 +61,8 @@ plot.bugs <- function (x, display.parallel = FALSE, ...){
 "bugs.plot.summary" <-
   function (sims, ...){
     isDIC <- sims$isDIC
-    
+    oldpar <- par(no.readonly = TRUE)    # code line i
+    on.exit(par(oldpar))            # code line i + 1
     if (.Device=="windows" ||
         (.Device=="null device" && options("device")=="windows")){
       cex.names <- .7
@@ -136,16 +139,8 @@ plot.bugs <- function (x, display.parallel = FALSE, ...){
     a <- -b * p.rng[1]
     
     par (mar=c(0,0,1,3))
-    # if in Splus, suppress printing of warnings during the plotting.
-    # otherwise a warning is generated 
-    if (!is.R()){
-      warn.settings <- options("warn")[[1]]
-      options (warn = -1)
-    }
     plot (c(0,1), c(min(bottom, -max.length)-3,2.5),
           ann=FALSE, bty="n", xaxt="n", yaxt="n", type="n")
-    if (!is.R())
-      options(warn = warn.settings)
     
     W <- max(strwidth(unlist(dimnames(summ)[[1]]), cex=cex.names))
     B <- (1-W)/3.6
@@ -218,6 +213,8 @@ plot.bugs <- function (x, display.parallel = FALSE, ...){
 
 "bugs.plot.inferences" <-
   function (sims, display.parallel, ...){
+    oldpar <- par(no.readonly = TRUE)    # code line i
+    on.exit(par(oldpar))            # code line i + 1
     if (.Device=="windows" ||
         (.Device=="null device" && options("device")=="windows")){
       cex.names <- .7
@@ -247,16 +244,8 @@ plot.bugs <- function (x, display.parallel = FALSE, ...){
     height <- .6
     par (mar=c(0,0,1,0))
     
-    ## if in Splus, suppress printing of warnings during the plotting.
-    ## otherwise a warning is generated 
-    if (!is.R()){
-      warn.settings <- options("warn")[[1]]
-      options (warn = -1)
-    }
     plot (c(0,1), c(-n.roots-.5,-.4),
           ann=FALSE, bty="n", xaxt="n", yaxt="n", type="n")
-    if (!is.R())
-      options(warn = warn.settings)
     
     W <- max(strwidth(rootnames, cex=cex.names))
     B <- (1-W)/3.8
