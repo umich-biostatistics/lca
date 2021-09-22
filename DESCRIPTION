@@ -1,5 +1,5 @@
 Package: lcra
-Version: 1.1.2
+Version: 1.1.3
 Title: Bayesian Joint Latent Class and Regression Models
 Type: Package
 Description: For fitting Bayesian joint latent class and regression models using
@@ -13,7 +13,7 @@ Description: For fitting Bayesian joint latent class and regression models using
 Authors@R: c(
     person(given = "Michael", family = "Elliot", role = c("aut"), email = "mrelliot@umich.edu"),
     person(given = "Zhangchen", family = "Zhao", role = c("aut"), email = "zczhao@umich.edu"),
-    person(given = "Michael", family = "Kleinsasser", role = c("aut", "cre"), email = "mkleinsa@umich.edu"))
+    person(given = "Michael", family = "Kleinsasser", role = c("aut", "cre"), email = "biostat-cran-manager@umich.edu"))
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
