@@ -1,11 +1,7 @@
+R Package `lcra`
+================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# R package `lcra`
-
-[![](https://img.shields.io/badge/doi-10.1097/EDE.0000000000001139-yellow.svg)](https://doi.org/10.1097/EDE.0000000000001139)
-[![](https://img.shields.io/badge/devel%20version-1.1.2-blue.svg)](https://github.com/umich-biostatistics/lcra)
-[![](https://img.shields.io/github/languages/code-size/umich-biostatistics/lcra.svg)](https://github.com/umich-biostatistics/lcra)
 
 A user-friendly interface for doing joint Bayesian latent class and
 regression analysis with binary and continuous outcomes.
@@ -40,15 +36,12 @@ press at Epidemiology.
 ## Installation
 
 JAGS is the new default Gibbs sampler for the package. Install JAGS
-here: [JAGS Download](http://mcmc-jags.sourceforge.net/).
+here: [JAGS Download](https://mcmc-jags.sourceforge.io/).
 
 This package uses the R interface for JAGS and WinBUGS. The package
 `R2WinBUGS` in turn depends on the standalone Windows program `WinBUGS`,
 and `rjags` depends on the standalone program JAGS. Follow this link:
-[University of Cambridge MRC Biostatistics
-Unit](https://www.mrc-bsu.cam.ac.uk/software/bugs/the-bugs-project-winbugs/)
-for WinBUGS download and installation instructions. Follow this link:
-[JAGS Download](http://mcmc-jags.sourceforge.net/) for JAGS download and
+[JAGS Download](https://mcmc-jags.sourceforge.io/) for JAGS download and
 installation instructions.
 
 Once you’ve chosen between JAGS or WinBUGS, open R and run:
@@ -104,12 +97,12 @@ Please note also that the reference category for latent classes in the
 outcome model output is always the Jth latent class in the output, and
 the bugs output is defined by the Latin equivalent of the model
 parameters (beta, alpha, tau, pi, theta). Also, the bugs output includes
-the variable true, which corresponds to the MCMC draws of C\_i, i =
+the variable true, which corresponds to the MCMC draws of C_i, i =
 1,…,n, as well as the MCMC draws of the deviance (DIC) statistic.
 Finally the bugs output for pi is stored in a three dimensional array
 corresponding to (class, variable, category), where category is indexed
-by 1 through maximum K\_l; for variables where the number of categories
-is less than maximum K\_l, these cells will be set to NA. The parameters
+by 1 through maximum K_l; for variables where the number of categories
+is less than maximum K_l, these cells will be set to NA. The parameters
 outputed by the lcra function currently are not user definable.
 
 ### More examples:
@@ -121,7 +114,6 @@ Here is an example analysis on simulated data with continuous and
 discrete outcomes:
 
 ``` r
-
 # quick example
 
 inits = list(list(theta = c(0.33, 0.33, 0.34), beta = rep(0, length = 3), 
