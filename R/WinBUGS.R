@@ -39,7 +39,7 @@ plot.bugs <- function (x, display.parallel = FALSE, ...){
   mar.old <- par("mar")
   pty.old <- par(pty = "m")
   mfrow.old <- par("mfrow")
-  if (is.R())
+  if (TRUE)
     layout(matrix(c(1,2),1,2))
   else
     par(mfrow = c(1,2))
@@ -54,7 +54,7 @@ plot.bugs <- function (x, display.parallel = FALSE, ...){
   header <- paste(header, x$n.chains, " chains, each with ",
                   x$n.iter, " iterations (first ", x$n.burnin, " discarded)", sep = "")
   mtext(header, outer = TRUE, line = -1, cex = 0.7)
-  if (is.R())  par(pty = pty.old[[1]], mar = mar.old, mfrow = mfrow.old)
+  if (TRUE)  par(pty = pty.old[[1]], mar = mar.old, mfrow = mfrow.old)
   else  invisible(par(pty = pty.old[[1]], mar = mar.old, mfrow = mfrow.old))
 }
 
@@ -91,7 +91,7 @@ plot.bugs <- function (x, display.parallel = FALSE, ...){
       J[J==max(J)] <- max(J)-1
       total <- ceiling(sum(J+.5))
     }
-    if (is.R()){
+    if (TRUE){
       pos <- -1
     } else {
       pos <- -1.5
@@ -105,21 +105,21 @@ plot.bugs <- function (x, display.parallel = FALSE, ...){
     ystart <- numeric(n.roots)
     for (k in 1:n.roots){
       ystart[k] <- pos
-      if (is.R()) {
+      if (TRUE) {
         ypos <- c(ypos, pos - seq(0, J[k]-1))
       } else {
         # In S-PLUS, increase the vertical spacing
         ypos <- c(ypos, pos - 1.5*seq(0, J[k]-1))
       }
       id <- c(id, 1:J[k])
-      if (is.R()) {
+      if (TRUE) {
         pos <- pos - J[k] -.5
       } else {
         pos <- pos - 1.5*J[k] -0.75
       }
       if (k>1) jj <- c(jj, sum(J0[1:(k-1)]) + (1:J[k]))
     }
-    if (is.R()){
+    if (TRUE){
       bottom <- min(ypos)-1  
     } else {
       bottom <- min(ypos)-1.5  
@@ -179,7 +179,7 @@ plot.bugs <- function (x, display.parallel = FALSE, ...){
     for (j in 1:sum(J)){
       name <- dimnames(summ)[[1]][jj[j]]
       if (id[j]==1)
-        if (is.R()) {
+        if (TRUE) {
           text (0, ypos[j], name, adj=0, cex=cex.names)
         } else {
           # in S-PLUS, strwidth is an upper bound on the length of the string,
