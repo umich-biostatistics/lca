@@ -5,7 +5,7 @@
 #' 100 observations of 13 variables, which include 10 manifest variables,
 #' and two regressors - one continuous and one dummy.
 #' 
-#' \itemize{
+#' \describe{
 #'   \item{Y }{Continuous regression outcome of interest}
 #'   \item{Z1 }{Categorical manifest variable 1}
 #'   \item{Z2 }{Categorical manifest variable 2}
@@ -32,7 +32,7 @@
 #' 100 observations of 13 variables, which include 10 manifest variables,
 #' and two regressors - one continuous and one dummy.
 #' 
-#' \itemize{
+#' \describe{
 #'   \item{Y }{Discrete regression outcome of interest}
 #'   \item{Z1 }{Categorical manifest variable 1}
 #'   \item{Z2 }{Categorical manifest variable 2}
@@ -59,7 +59,7 @@
 #' 350 observations of 16 variables, which include 12 manifest variables,
 #' and four regressors.
 #' 
-#' \itemize{
+#' \describe{
 #'   \item{y }{Discrete regression outcome of interest}
 #'   \item{Z1 }{Categorical manifest variable 1}
 #'   \item{Z2 }{Categorical manifest variable 2}
@@ -90,7 +90,7 @@
 #' 350 observations of 16 variables, which include 12 manifest variables,
 #' and four regressors.
 #' 
-#' \itemize{
+#' \describe{
 #'   \item{y }{Discrete regression outcome of interest}
 #'   \item{Z1 }{Categorical manifest variable 1}
 #'   \item{Z2 }{Categorical manifest variable 2}
@@ -121,7 +121,7 @@
 #' 150 observations of 8 variables, which include 5 manifest variables,
 #' and two regressors.
 #' 
-#' \itemize{
+#' \describe{
 #'   \item{y }{Discrete regression outcome of interest}
 #'   \item{Z1 }{Categorical manifest variable 1}
 #'   \item{Z2 }{Categorical manifest variable 2}

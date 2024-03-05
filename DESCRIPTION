@@ -30,5 +30,5 @@ Suggests:
 SystemRequirements: JAGS 4.x.y or WinBUGS 1.4
 URL: https://github.com/umich-biostatistics/lcra
 BugReports: https://github.com/umich-biostatistics/lcra/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)

@@ -16,7 +16,7 @@ Simulated data set with continuous regression outcome. The data set contains
 and two regressors - one continuous and one dummy.
 }
 \details{
-\itemize{
+\describe{
 \item{Y }{Continuous regression outcome of interest}
 \item{Z1 }{Categorical manifest variable 1}
 \item{Z2 }{Categorical manifest variable 2}

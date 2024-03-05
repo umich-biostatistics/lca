@@ -16,7 +16,7 @@ Simulated data set with discrete regression outcome. The data set contains
 and four regressors.
 }
 \details{
-\itemize{
+\describe{
 \item{y }{Discrete regression outcome of interest}
 \item{Z1 }{Categorical manifest variable 1}
 \item{Z2 }{Categorical manifest variable 2}
